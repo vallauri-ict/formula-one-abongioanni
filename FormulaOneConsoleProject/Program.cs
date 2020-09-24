@@ -6,7 +6,7 @@ namespace FormulaOneConsoleProject
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("\t\t=== FORMULA ONE - BATCH ACTIONS ===");
         }
     }
 }
