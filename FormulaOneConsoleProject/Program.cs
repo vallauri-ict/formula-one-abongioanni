@@ -10,12 +10,13 @@ namespace FormulaOneConsoleProject {
         private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
 
         private static void Main(string[] args) {
-            CheckFilesIntoWorkingSpace();
+            CheckWorkData();
             Console.WriteLine("\t\t\t=== FORMULA ONE - BATCH ACTIONS ===");
             //ExecuteSqlScript("checkDb.sql");
 
             string scelta;
             do {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.Clear();
                 Console.WriteLine("MENU'");
                 Console.WriteLine("1: Create Countries");
@@ -42,20 +43,20 @@ namespace FormulaOneConsoleProject {
             } while (scelta.ToUpper() != "X");
         }
 
-        private static void CheckFilesIntoWorkingSpace() {
+        private static void CheckWorkData() {
             if (!Directory.Exists(WORKINGPATH)) {
                 Directory.CreateDirectory(WORKINGPATH);
             }
             foreach (var file in Directory.GetFiles(DATAPATH)) {
-                if (!File.Exists(Path.Combine(WORKINGPATH, file))) {
-                    File.Copy(file, Path.Combine(WORKINGPATH, file));
+                if (!File.Exists(Path.Combine(WORKINGPATH, file.Split("\\").Last()))) {
+                    File.Copy(file, Path.Combine(WORKINGPATH, file.Split("\\").Last()));
                 }
             }
-            CheckFolder(Path.Combine(WORKINGPATH, "font"), Path.Combine(DATAPATH, "font"));
-            CheckFolder(Path.Combine(WORKINGPATH, "img"), Path.Combine(DATAPATH, "img"));
+            CheckFolderFiles(Path.Combine(WORKINGPATH, "font"), Path.Combine(DATAPATH, "font"));
+            CheckFolderFiles(Path.Combine(WORKINGPATH, "img"), Path.Combine(DATAPATH, "img"));
         }
 
-        private static void CheckFolder(string oldFolder, string newFolder) {
+        private static void CheckFolderFiles(string oldFolder, string newFolder) {
             if (!Directory.Exists(oldFolder) || Directory.GetFiles(oldFolder).Length != Directory.GetFiles(newFolder).Length) {
                 Directory.CreateDirectory(oldFolder);
                 foreach (string newPath in Directory.GetFiles(newFolder, "*.*", SearchOption.AllDirectories)) {
