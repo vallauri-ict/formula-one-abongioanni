@@ -6,12 +6,13 @@ using System.Linq;
 namespace FormulaOneConsoleProject {
     internal class Program {
         public const string WORKINGPATH = @"C:\data\FormulaOne\";
-
+        public const string DATAPATH = @"..\..\..\..\Data";
         private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
 
         private static void Main(string[] args) {
-            CheckFile();
+            CheckFilesIntoWorkingSpace();
             Console.WriteLine("\t\t\t=== FORMULA ONE - BATCH ACTIONS ===");
+            //ExecuteSqlScript("checkDb.sql");
 
             string scelta;
             do {
@@ -20,9 +21,6 @@ namespace FormulaOneConsoleProject {
                 Console.WriteLine("1: Create Countries");
                 Console.WriteLine("2: Create Teams");
                 Console.WriteLine("3: Create Drivers");
-                Console.WriteLine("4: Drop Countries");
-                Console.WriteLine("5: Drop Teams");
-                Console.WriteLine("6: Drop Drivers");
                 Console.WriteLine("X: Exit");
                 Console.Write("# ");
                 scelta = Console.ReadLine();
@@ -44,31 +42,31 @@ namespace FormulaOneConsoleProject {
             } while (scelta.ToUpper() != "X");
         }
 
-        private static void CheckFile() {
-            var imageFolder = Path.Combine(WORKINGPATH, "img");
-            if (!File.Exists(Path.Combine(WORKINGPATH, "FormulaOne.mdf"))) {
-                File.Copy(@"..\..\..\..\Data\FormulaOne.mdf", Path.Combine(WORKINGPATH, "FormulaOne.mdf"));
+        private static void CheckFilesIntoWorkingSpace() {
+            if (!Directory.Exists(WORKINGPATH)) {
+                Directory.CreateDirectory(WORKINGPATH);
             }
-            if (!File.Exists(Path.Combine(WORKINGPATH, "drivers.sql"))) {
-                File.Copy(@"..\..\..\..\Data\drivers.sql", Path.Combine(WORKINGPATH, "drivers.sql"));
+            foreach (var file in Directory.GetFiles(DATAPATH)) {
+                if (!File.Exists(Path.Combine(WORKINGPATH, file))) {
+                    File.Copy(file, Path.Combine(WORKINGPATH, file));
+                }
             }
-            if (!File.Exists(Path.Combine(WORKINGPATH, "teams.sql"))) {
-                File.Copy(@"..\..\..\..\Data\teams.sql", Path.Combine(WORKINGPATH, "teams.sql"));
-            }
-            if (!File.Exists(Path.Combine(WORKINGPATH, "countries.sql"))) {
-                File.Copy(@"..\..\..\..\Data\countries.sql", Path.Combine(WORKINGPATH, "countries.sql"));
-            }
-            if (!Directory.Exists(imageFolder) || Directory.GetFiles(imageFolder).Length != Directory.GetFiles(@"..\..\..\..\Data\img").Length) {
-                Directory.CreateDirectory(imageFolder);
-                foreach (string newPath in Directory.GetFiles(@"..\..\..\..\Data\img", "*.*", SearchOption.AllDirectories)) {
+            CheckFolder(Path.Combine(WORKINGPATH, "font"), Path.Combine(DATAPATH, "font"));
+            CheckFolder(Path.Combine(WORKINGPATH, "img"), Path.Combine(DATAPATH, "img"));
+        }
+
+        private static void CheckFolder(string oldFolder, string newFolder) {
+            if (!Directory.Exists(oldFolder) || Directory.GetFiles(oldFolder).Length != Directory.GetFiles(newFolder).Length) {
+                Directory.CreateDirectory(oldFolder);
+                foreach (string newPath in Directory.GetFiles(newFolder, "*.*", SearchOption.AllDirectories)) {
                     var filename = newPath.Split("\\").Last();
-                    File.Copy(Path.Combine(@"..\..\..\..\Data\img\", filename), Path.Combine(imageFolder, filename), true);
+                    File.Copy(Path.Combine(newFolder, filename), Path.Combine(oldFolder, filename), true);
                 }
             }
         }
 
         private static void ExecuteSqlScript(string path) {
-            string fileContent = File.ReadAllText(WORKINGPATH + path);
+            string fileContent = File.ReadAllText(Path.Combine(WORKINGPATH, path));
             fileContent = fileContent.Replace("\r\n", "")
                 .Replace("\r", "")
                 .Replace("\n", "")
