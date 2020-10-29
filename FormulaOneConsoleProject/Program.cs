@@ -23,7 +23,6 @@ namespace FormulaOneConsoleProject {
                 Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
             }
         }
-        Thread th;
         public const string WORKINGPATH = @"C:\data\FormulaOne\";
         public const string DATAPATH = @"..\..\..\..\Data";
         private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
@@ -41,7 +40,11 @@ namespace FormulaOneConsoleProject {
                 Console.WriteLine("1: Create Countries");
                 Console.WriteLine("2: Create Teams");
                 Console.WriteLine("3: Create Drivers");
+                Console.WriteLine("4: Create Circuits");
+                Console.WriteLine("5: Create Gps");
+                Console.WriteLine("--------------------------------");
                 Console.WriteLine("R: Reset DB");
+                Console.WriteLine("C: Create Constraints");
                 Console.WriteLine("B: Backup DB");
                 Console.WriteLine("G: Get Backup DB");
                 Console.WriteLine("X: Exit");
@@ -71,12 +74,28 @@ namespace FormulaOneConsoleProject {
                         Console.ReadKey();
 
                         break;
+                    case "4":
+                        th = new Thread(ConsoleWaiting);
+                        th.Start();
+                        ExecuteSqlScript("circuits.sql");
+                        Console.ReadKey();
+
+                        break;
+                    case "5":
+                        th = new Thread(ConsoleWaiting);
+                        th.Start();
+                        ExecuteSqlScript("gps.sql");
+                        Console.ReadKey();
+
+                        break;
                     case "R":
                     case "r":
                         bool err = ExecuteSqlCommands(new string[]{
                             "IF EXISTS(SELECT * FROM [Team]) DROP TABLE[Team];",
                             "IF EXISTS(SELECT * FROM [Driver]) DROP TABLE[Driver];",
-                            "IF EXISTS(SELECT * FROM [Country]) DROP TABLE[Country];"
+                            "IF EXISTS(SELECT * FROM [Country]) DROP TABLE[Country];",
+                            "IF EXISTS(SELECT * FROM [Circuit]) DROP TABLE[Circuit];",
+                            "IF EXISTS(SELECT * FROM [GP]) DROP TABLE[GP];"
                         });
                         Console.ForegroundColor = ConsoleColor.Green;
                         if (!err) {
@@ -95,19 +114,38 @@ namespace FormulaOneConsoleProject {
                                     "countries.sql",
                                     "teams.sql",
                                     "drivers.sql",
+                                    "circuits.sql",
+                                    "gps.sql"
                                 });
                             }
+                            Console.ForegroundColor = ConsoleColor.White;
+                            do {
+                                Console.Write("Do you want to create all the constraints? [y/n]: ");
+                                c = Console.ReadLine().ToUpper();
+                            } while (c != "Y" && c != "N");
+                            if (c == "Y") {
+                                ExecuteSqlScript("constraints.sql");
+                                Console.WriteLine("R: Reset DB");
+                            }
                         }
-                        Console.ReadKey();
-
                         break;
                     case "B":
                     case "b":
                         Backup();
+                        Console.ReadKey();
+
+                        break;
+                    case "C":
+                    case "c":
+                        ExecuteSqlScript("constraints.sql");
+                        Console.ReadKey();
+
                         break;
                     case "G":
                     case "g":
                         Restore();
+                        Console.ReadKey();
+
                         break;
                     case "X":
                     default:
@@ -145,6 +183,8 @@ namespace FormulaOneConsoleProject {
                     }
                     backupConn.Close();
                 }
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Backup has been created succesfully!");
             }
 
             catch (Exception ex) {
@@ -168,6 +208,7 @@ namespace FormulaOneConsoleProject {
                     SqlCommand bu4 = new SqlCommand(sqlStmt4, con);
                     bu4.ExecuteNonQuery();
 
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("database restoration done successefully");
                     con.Close();
                 }
@@ -175,8 +216,6 @@ namespace FormulaOneConsoleProject {
             catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
             }
-
-
         }
 
 
