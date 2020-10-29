@@ -42,6 +42,8 @@ namespace FormulaOneConsoleProject {
                 Console.WriteLine("2: Create Teams");
                 Console.WriteLine("3: Create Drivers");
                 Console.WriteLine("R: Reset DB");
+                Console.WriteLine("B: Backup DB");
+                Console.WriteLine("G: Get Backup DB");
                 Console.WriteLine("X: Exit");
                 Console.Write("# ");
                 scelta = Console.ReadLine();
@@ -99,6 +101,14 @@ namespace FormulaOneConsoleProject {
                         Console.ReadKey();
 
                         break;
+                    case "B":
+                    case "b":
+                        Backup();
+                        break;
+                    case "G":
+                    case "g":
+                        Restore();
+                        break;
                     case "X":
                     default:
                         stopWait = true;
@@ -106,6 +116,69 @@ namespace FormulaOneConsoleProject {
                 }
             } while (scelta.ToUpper() != "X");
         }
+
+        private static void Backup() {
+            try {
+                using (SqlConnection dbConn = new SqlConnection()) {
+                    dbConn.ConnectionString = CONNECTION_STRING;
+                    dbConn.Open();
+
+                    using (SqlCommand multiuser_rollback_dbcomm = new SqlCommand()) {
+                        multiuser_rollback_dbcomm.Connection = dbConn;
+                        multiuser_rollback_dbcomm.CommandText = @"ALTER DATABASE [" + WORKINGPATH + "FormulaOne.mdf] SET MULTI_USER WITH ROLLBACK IMMEDIATE";
+
+                        multiuser_rollback_dbcomm.ExecuteNonQuery();
+                    }
+                    dbConn.Close();
+                }
+
+                SqlConnection.ClearAllPools();
+
+                using (SqlConnection backupConn = new SqlConnection()) {
+                    backupConn.ConnectionString = CONNECTION_STRING;
+                    backupConn.Open();
+
+                    using (SqlCommand backupcomm = new SqlCommand()) {
+                        backupcomm.Connection = backupConn;
+                        backupcomm.CommandText = @"BACKUP DATABASE [" + WORKINGPATH + "FormulaOne.mdf] TO DISK='" + WORKINGPATH + @"\prova.bak'";
+                        backupcomm.ExecuteNonQuery();
+                    }
+                    backupConn.Close();
+                }
+            }
+
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void Restore() {
+            try {
+                using (SqlConnection con = new SqlConnection(CONNECTION_STRING)) {
+                    con.Open();
+                    string sqlStmt2 = string.Format(@"ALTER DATABASE [" + WORKINGPATH + "FormulaOne.mdf] SET SINGLE_USER WITH ROLLBACK IMMEDIATE");
+                    SqlCommand bu2 = new SqlCommand(sqlStmt2, con);
+                    bu2.ExecuteNonQuery();
+
+                    string sqlStmt3 = @"USE MASTER RESTORE DATABASE [" + WORKINGPATH + "FormulaOne.mdf] FROM DISK='" + WORKINGPATH + @"\prova.bak' WITH REPLACE;";
+                    SqlCommand bu3 = new SqlCommand(sqlStmt3, con);
+                    bu3.ExecuteNonQuery();
+
+                    string sqlStmt4 = string.Format(@"ALTER DATABASE [" + WORKINGPATH + "FormulaOne.mdf] SET MULTI_USER");
+                    SqlCommand bu4 = new SqlCommand(sqlStmt4, con);
+                    bu4.ExecuteNonQuery();
+
+                    Console.WriteLine("database restoration done successefully");
+                    con.Close();
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+            }
+
+
+        }
+
 
         private static void ConsoleWaiting() {
             ConsoleSpinner spin = new ConsoleSpinner();
