@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -27,6 +29,19 @@ namespace FormulaOneConsoleProject {
         public const string DATAPATH = @"..\..\..\..\Data";
         private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
         private static bool stopWait;
+        private struct Scripts {
+            public static string[] Tables => new string[] { "Countries.sql",
+                            "Teams.sql",
+                            "Drivers.sql",
+                            "Circuits.sql",
+                            "Gps.sql"
+                        };
+            public static Dictionary<string, string> Constraints => new Dictionary<string, string> {
+                {"set", "setConstraints.sql" },
+                {"delete", "deleteConstraints.sql" }
+            };
+        }
+
         private static void Main(string[] args) {
             CheckWorkData();
             Console.WriteLine("\t\t\t=== FORMULA ONE - BATCH ACTIONS ===");
@@ -42,54 +57,43 @@ namespace FormulaOneConsoleProject {
                 Console.WriteLine("3: Create Drivers");
                 Console.WriteLine("4: Create Circuits");
                 Console.WriteLine("5: Create Gps");
+                Console.WriteLine("0: Create all tables");
                 Console.WriteLine("--------------------------------");
+                Console.WriteLine("S: Show tables");
                 Console.WriteLine("R: Reset DB");
                 Console.WriteLine("C: Create Constraints");
+                Console.WriteLine("D: Delete Constraints");
                 Console.WriteLine("B: Backup DB");
                 Console.WriteLine("G: Get Backup DB");
                 Console.WriteLine("X: Exit");
                 Console.Write("# ");
                 scelta = Console.ReadLine();
+                Console.WriteLine();
                 stopWait = false;
                 (bool, string) err;
                 switch (scelta) {
+                    case "0":
                     case "1":
-                        Thread th = new Thread(ConsoleWaiting);
-                        th.Start();
-                        ExecuteSqlScript("countries.sql");
-                        Console.ReadKey();
-
-                        break;
                     case "2":
-                        th = new Thread(ConsoleWaiting);
-                        th.Start();
-                        ExecuteSqlScript("teams.sql");
-                        Console.ReadKey();
-
-                        break;
                     case "3":
-                        th = new Thread(ConsoleWaiting);
-                        th.Start();
-                        ExecuteSqlScript("drivers.sql");
-                        Console.ReadKey();
-
-                        break;
                     case "4":
-                        th = new Thread(ConsoleWaiting);
-                        th.Start();
-                        ExecuteSqlScript("circuits.sql");
-                        Console.ReadKey();
-
-                        break;
                     case "5":
-                        th = new Thread(ConsoleWaiting);
-                        th.Start();
-                        ExecuteSqlScript("gps.sql");
+                        Thread th = new Thread(ConsoleWaiting);
+                        if (scelta == "0") {
+                            th.Start("Creating tables");
+                            ExecuteSqlScript(Scripts.Tables);
+                        }
+                        else {
+                            string file = Scripts.Tables[Convert.ToInt32(scelta) - 1];
+                            th.Start($"Creating {file.Split('.')[0]}");
+                            ExecuteSqlScript(file);
+                        }
                         Console.ReadKey();
 
                         break;
                     case "R":
                     case "r":
+                        ExecuteSqlScript(Scripts.Constraints["delete"]);
                         err = ExecuteSqlCommands(new string[]{
                             "IF EXISTS(SELECT * FROM [Team]) DROP TABLE[Team];",
                             "IF EXISTS(SELECT * FROM [Driver]) DROP TABLE[Driver];",
@@ -109,21 +113,15 @@ namespace FormulaOneConsoleProject {
                             } while (c != "Y" && c != "N");
                             if (c == "Y") {
                                 th = new Thread(ConsoleWaiting);
-                                th.Start();
-                                ExecuteSqlScript(new string[]{
-                                    "countries.sql",
-                                    "teams.sql",
-                                    "drivers.sql",
-                                    "circuits.sql",
-                                    "gps.sql"
-                                });
+                                th.Start("Creating tables");
+                                ExecuteSqlScript(Scripts.Tables);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 do {
                                     Console.Write("Do you want to create all the constraints? [y/n]: ");
                                     c = Console.ReadLine().ToUpper();
                                 } while (c != "Y" && c != "N");
                                 if (c == "Y") {
-                                    ExecuteSqlScript("constraints.sql");
+                                    ExecuteSqlScript(Scripts.Constraints["set"]);
                                     Console.ReadKey();
                                 }
                             }
@@ -142,7 +140,14 @@ namespace FormulaOneConsoleProject {
                         break;
                     case "C":
                     case "c":
-                        ExecuteSqlScript("constraints.sql");
+                    case "D":
+                    case "d":
+                        if (scelta.ToUpper() == "C") {
+                            ExecuteSqlScript(Scripts.Constraints["set"]);
+                        }
+                        else {
+                            ExecuteSqlScript(Scripts.Constraints["delete"]);
+                        }
                         Console.ReadKey();
 
                         break;
@@ -152,12 +157,39 @@ namespace FormulaOneConsoleProject {
                         Console.ReadKey();
 
                         break;
+                    case "S":
+                    case "s":
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        foreach (var t in ShowTables()) {
+                            Console.WriteLine($"{t}");
+                        }
+
+                        Console.ReadKey();
+
+                        break;
                     case "X":
                     default:
                         stopWait = true;
                         break;
                 }
             } while (scelta.ToUpper() != "X");
+        }
+
+        private static string[] ShowTables() {
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand("SELECT TABLE_NAME  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'", connection)) {
+                    DataTable t = new DataTable();
+                    string[] tables = new string[0];
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(t);
+                    foreach (DataRow row in t.Rows) {
+                        Array.Resize(ref tables, tables.Length + 1);
+                        tables[tables.Length - 1] = row["TABLE_NAME"].ToString();
+                    }
+                    return tables;
+                }
+            }
         }
 
         private static void Backup() {
@@ -224,9 +256,9 @@ namespace FormulaOneConsoleProject {
         }
 
 
-        private static void ConsoleWaiting() {
+        private static void ConsoleWaiting(object prompt) {
             ConsoleSpinner spin = new ConsoleSpinner();
-            Console.Write("\nCreating table ");
+            Console.Write($"\n{prompt} ");
 
             while (!stopWait) {
                 spin.Turn();
@@ -260,7 +292,7 @@ namespace FormulaOneConsoleProject {
         }
 
         private static void ExecuteSqlScript(string path) {
-            string fileContent = File.ReadAllText(Path.Combine(WORKINGPATH, path));
+            string fileContent = File.ReadAllText(Path.Combine(WORKINGPATH, $"{path}"));
             fileContent = fileContent.Replace("\r\n", "")
                 .Replace("\r", "")
                 .Replace("\n", "")
@@ -284,9 +316,9 @@ namespace FormulaOneConsoleProject {
         private static (bool, string) ExecuteSqlCommands(string[] queries) {
             bool err = false;
             string strErr = "";
-            using (SqlConnection conn = new SqlConnection(CONNECTION_STRING)) {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand("query", conn)) {
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand("query", connection)) {
                     int i = 0;
                     foreach (var query in queries) {
                         cmd.CommandText = query;

@@ -6,9 +6,9 @@ ALTER TABLE [dbo].[Team]  WITH CHECK ADD  CONSTRAINT [FK_Teams_Countries] FOREIG
 REFERENCES [dbo].[Country] ([countryCode])
 ON UPDATE CASCADE;
 
-ALTER TABLE [dbo].[Team]  WITH CHECK ADD  CONSTRAINT [FK_Teams_Drivers] FOREIGN KEY([id])
-REFERENCES [dbo].[Driver] ([TeamId])
-ON UPDATE CASCADE;
+ALTER TABLE [dbo].[Driver]  WITH CHECK ADD  CONSTRAINT [FK_Teams_Drivers] FOREIGN KEY([TeamId])
+REFERENCES [dbo].[Team] ([id])
+ON DELETE NO ACTION;
 
 ALTER TABLE [dbo].[Gp]  WITH CHECK ADD  CONSTRAINT [FK_Gp_Circuits] FOREIGN KEY([circuitID])
 REFERENCES [dbo].[Circuit] ([circuitID])
