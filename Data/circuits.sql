@@ -7,8 +7,8 @@ CREATE TABLE [dbo].[Circuit] (
     [circuitLength] int NOT NULL,
     [firstGpHostYear] char(4) NOT NULL,
     [fastestLap] varchar(40) NOT NULL default '',
-    [thumbnailImg] varchar(612) NOT NULL,
-    [descIMG] varchar(612) NOT NULL,
+    [thumbnailImg] image NOT NULL,
+    [descIMG] img NOT NULL,
     PRIMARY KEY ([circuitID])
 );
 
