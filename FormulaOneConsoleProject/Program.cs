@@ -51,7 +51,7 @@ namespace FormulaOneConsoleProject {
                 Console.Write("# ");
                 scelta = Console.ReadLine();
                 stopWait = false;
-
+                (bool, string) err;
                 switch (scelta) {
                     case "1":
                         Thread th = new Thread(ConsoleWaiting);
@@ -90,7 +90,7 @@ namespace FormulaOneConsoleProject {
                         break;
                     case "R":
                     case "r":
-                        bool err = ExecuteSqlCommands(new string[]{
+                        err = ExecuteSqlCommands(new string[]{
                             "IF EXISTS(SELECT * FROM [Team]) DROP TABLE[Team];",
                             "IF EXISTS(SELECT * FROM [Driver]) DROP TABLE[Driver];",
                             "IF EXISTS(SELECT * FROM [Country]) DROP TABLE[Country];",
@@ -98,7 +98,7 @@ namespace FormulaOneConsoleProject {
                             "IF EXISTS(SELECT * FROM [GP]) DROP TABLE[GP];"
                         });
                         Console.ForegroundColor = ConsoleColor.Green;
-                        if (!err) {
+                        if (!err.Item1) {
                             Console.WriteLine($"\nTables have been deleted succesfully!");
                             Console.ReadKey();
                             string c;
@@ -117,16 +117,21 @@ namespace FormulaOneConsoleProject {
                                     "circuits.sql",
                                     "gps.sql"
                                 });
+                                Console.ForegroundColor = ConsoleColor.White;
+                                do {
+                                    Console.Write("Do you want to create all the constraints? [y/n]: ");
+                                    c = Console.ReadLine().ToUpper();
+                                } while (c != "Y" && c != "N");
+                                if (c == "Y") {
+                                    ExecuteSqlScript("constraints.sql");
+                                    Console.ReadKey();
+                                }
                             }
-                            Console.ForegroundColor = ConsoleColor.White;
-                            do {
-                                Console.Write("Do you want to create all the constraints? [y/n]: ");
-                                c = Console.ReadLine().ToUpper();
-                            } while (c != "Y" && c != "N");
-                            if (c == "Y") {
-                                ExecuteSqlScript("constraints.sql");
-                                Console.WriteLine("R: Reset DB");
-                            }
+                        }
+                        else {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Error while deleting tables: {err.Item2}");
+                            Console.ReadKey();
                         }
                         break;
                     case "B":
@@ -221,7 +226,7 @@ namespace FormulaOneConsoleProject {
 
         private static void ConsoleWaiting() {
             ConsoleSpinner spin = new ConsoleSpinner();
-            Console.Write("\nCreating tables ");
+            Console.Write("\nCreating table ");
 
             while (!stopWait) {
                 spin.Turn();
@@ -260,17 +265,25 @@ namespace FormulaOneConsoleProject {
                 .Replace("\r", "")
                 .Replace("\n", "")
                 .Replace("\t", "");
-            bool err = ExecuteSqlCommands(fileContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+            var err = ExecuteSqlCommands(fileContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
             stopWait = true;
-            if (!err) {
+            if (!err.Item1) {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\n{path} has been completed succesfully!");
             }
+            else {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\nError executing the script {path}: {err.Item2}");
+            }
         }
 
+        private static (bool, string) ExecuteSqlCommands(string query) {
+            return ExecuteSqlCommands(new string[] { query });
+        }
 
-        private static bool ExecuteSqlCommands(string[] queries) {
+        private static (bool, string) ExecuteSqlCommands(string[] queries) {
             bool err = false;
+            string strErr = "";
             using (SqlConnection conn = new SqlConnection(CONNECTION_STRING)) {
                 conn.Open();
                 using (SqlCommand cmd = new SqlCommand("query", conn)) {
@@ -282,14 +295,13 @@ namespace FormulaOneConsoleProject {
                             cmd.ExecuteNonQuery();
                         }
                         catch (SqlException se) {
-                            stopWait = err = true;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Errore nell'esecizione della query n°. {i}\n{se.Message}");
+                            err = true;
+                            strErr = se.Message;
                         }
                     }
                 }
             }
-            return err;
+            return (err, strErr);
         }
 
         private static void ExecuteSqlScript(string[] paths) {
