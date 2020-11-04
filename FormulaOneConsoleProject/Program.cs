@@ -25,27 +25,29 @@ namespace FormulaOneConsoleProject {
                 Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
             }
         }
-        public const string WORKINGPATH = @"C:\data\FormulaOne\";
-        public const string DATAPATH = @"..\..\..\..\Data";
-        private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
-        private static bool stopWait;
+
         private struct Scripts {
-            public static string[] Tables => new string[] { "Countries.sql",
-                            "Teams.sql",
-                            "Drivers.sql",
-                            "Circuits.sql",
-                            "Gps.sql"
-                        };
+            public static string[] Tables => new string[] {
+                "Countries.sql",
+                "Teams.sql",
+                "Drivers.sql",
+                "Circuits.sql",
+                "Gps.sql"
+            };
             public static Dictionary<string, string> Constraints => new Dictionary<string, string> {
                 {"set", "setConstraints.sql" },
                 {"delete", "deleteConstraints.sql" }
             };
         }
 
+        public const string WORKINGPATH = @"C:\data\FormulaOne\";
+        public const string DATAPATH = @"..\..\..\..\Data";
+        private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
+        private static bool stopWait;
+
         private static void Main(string[] args) {
             CheckWorkData();
             Console.WriteLine("\t\t\t=== FORMULA ONE - BATCH ACTIONS ===");
-            //ExecuteSqlScript("checkDb.sql");
 
             string scelta;
             do {
@@ -163,7 +165,6 @@ namespace FormulaOneConsoleProject {
                         foreach (var t in ShowTables()) {
                             Console.WriteLine($"{t}");
                         }
-
                         Console.ReadKey();
 
                         break;
