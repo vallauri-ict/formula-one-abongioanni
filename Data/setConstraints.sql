@@ -1,20 +1,16 @@
-ALTER TABLE [dbo].[Driver]  WITH CHECK ADD  CONSTRAINT [FK_Drivers_Countries] FOREIGN KEY([countryCode])
-REFERENCES [dbo].[Country] ([countryCode])
-ON UPDATE CASCADE;
+ALTER TABLE [Driver] ADD [FK_Drivers_Countries] FOREIGN KEY ([country]) REFERENCES [Country] ([iso2]);
 
-ALTER TABLE [dbo].[Team]  WITH CHECK ADD  CONSTRAINT [FK_Teams_Countries] FOREIGN KEY([countryCode])
-REFERENCES [dbo].[Country] ([countryCode])
-ON UPDATE CASCADE;
+ALTER TABLE [Team] ADD [FK_Teams_Countries] FOREIGN KEY ([country]) REFERENCES [Country] ([iso2]);
 
-ALTER TABLE [dbo].[Driver]  WITH CHECK ADD  CONSTRAINT [FK_Teams_Drivers] FOREIGN KEY([TeamId])
-REFERENCES [dbo].[Team] ([id])
-ON DELETE NO ACTION;
+ALTER TABLE [Circuit] ADD [FK_Circuits_Countries] FOREIGN KEY ([country]) REFERENCES [Country] ([iso2]);
 
-ALTER TABLE [dbo].[Gp]  WITH CHECK ADD  CONSTRAINT [FK_Gp_Circuits] FOREIGN KEY([circuitID])
-REFERENCES [dbo].[Circuit] ([circuitID])
-ON UPDATE CASCADE;
+ALTER TABLE [Driver] ADD [FK_Teams_Drivers] FOREIGN KEY ([team_id]) REFERENCES [Team] ([id]);
 
-ALTER TABLE [dbo].[Circuit]  WITH CHECK ADD  CONSTRAINT [FK_Circuits_Countries] FOREIGN KEY([countryCode])
-REFERENCES [dbo].[Country] ([countryCode])
-ON UPDATE CASCADE;
+ALTER TABLE [Race] ADD [FK_Race_Circuits] FOREIGN KEY ([circuit_id]) REFERENCES [Circuit] ([id]);
+
+ALTER TABLE [Result] ADD [FK_Results_Teams] FOREIGN KEY ([team_id]) REFERENCES [Team] ([id]);
+
+ALTER TABLE [Result] ADD [FK_Results_Drivers] FOREIGN KEY ([driver_id]) REFERENCES [Driver] ([number]);
+
+ALTER TABLE [Result] ADD [FK_Results_Races] FOREIGN KEY ([race_id]) REFERENCES [Race] ([id]);
 

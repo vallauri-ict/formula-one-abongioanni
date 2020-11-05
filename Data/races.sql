@@ -1,159 +1,157 @@
-CREATE TABLE [dbo].[GP] (
-    [gpID] char(4) NOT NULL default '',
-    [gpName] varchar(150) NOT NULL default '',
-    [circuitID] char(5) NOT NULL default '',
-    PRIMARY KEY ([gpID])
+CREATE TABLE [Race] (
+    [id] int PRIMARY KEY,
+    [name] varchar(150),
+    [circuit_id] char(5)
 );
-
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp1',
+        0,
         'Formula 1 Rolex Grosser Preis Von Österreich 2020',
         'RBR00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp2',
+        1,
         'Formula 1 Pirelli Grosser Preis Der Steiermark 2020',
         'RBR00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp3',
+        2,
         'Formula 1 Aramco Magyar Nagydíj 2020',
         'HUN00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp4',
+        3,
         'Formula 1 Pirelli British Grand Prix 2020',
         'GBT00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp5',
+        4,
         'Emirates Formula 1 70th Anniversary Grand Prix 2020',
         'GBT00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp6',
+        5,
         'Formula 1 Aramco Gran Premio De España 2020',
         'SPA00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp7',
+        6,
         'Formula 1 Rolex Belgian Grand Prix 2020',
         'BEL00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp8',
+        7,
         'Formula 1 Gran Premio Heineken D’italia 2020',
         'ITA00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp9',
+        8,
         'Formula 1 Pirelli Gran Premio Della Toscana Ferrari 1000 2020',
         'ITA01'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp10',
+        9,
         'Formula 1 VTB Russian Grand Prix 2020',
         'RUS00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp11',
+        10,
         'Formula 1 Aramco Grosser Preis Der Eifel 2020',
         'GER00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp12',
+        11,
         'Formula 1 Heineken Grande Prémio De Portugal 2020',
         'POR00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp13',
+        12,
         'Formula 1 Emirates Gran Premio Dell’ emilia Romagna 2020',
         'ITA02'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp14',
+        13,
         'Formula 1 DHL Turkish Grand Prix 2020',
         'TUR00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp15',
+        14,
         'Formula 1 Gulf Air Bahrain Grand Prix 2020',
         'BAH00'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp16',
+        15,
         'Formula 1 Rolex Sakhir Grand Prix 2020',
         'BAH01'
     );
 
 INSERT INTO
-    [GP]
+    [Race]
 VALUES
     (
-        'gp17',
+        16,
         'Formula 1 Etihad Airways Abu Dhabi Grand Prix 2020',
         'ABU01'
     );

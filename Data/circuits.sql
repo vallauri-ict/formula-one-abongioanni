@@ -1,19 +1,29 @@
-CREATE TABLE [dbo].[Circuit] (
-    [circuitID] char(5) NOT NULL default '',
-    [circuitName] varchar(70) NOT NULL default '',
-    [countryCode] char(2) NOT NULL default '',
-    [lapNumber] int NOT NULL default '',
-    [turnNumber] int NOT NULL default '',
-    [circuitLength] int NOT NULL,
-    [firstGpHostYear] char(4) NOT NULL,
-    [fastestLap] varchar(40) NOT NULL default '',
-    [thumbnailImg] image NOT NULL,
-    [descIMG] image NOT NULL,
-    PRIMARY KEY ([circuitID])
+CREATE TABLE [Circuit] (
+    [id] char(5) PRIMARY KEY,
+    [name] varchar(255),
+    [country] char(2),
+    [length] int,
+    [laps_number] int,
+    [turns_number] int,
+    [first_race_year] char(4),
+    [fastest_lap] varchar(100),
+    [full_image] image,
+    [small_image] image
 );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'RBR00',
@@ -24,12 +34,23 @@ VALUES
         4318,
         '1970',
         '1:05.619-Carlos Sainz-2020',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Austria%20carbon.png.transform/8col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Austria_Circuit.png.transform/8col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\redbull-ring.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\redbull-ring(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'HUN00',
@@ -40,12 +61,23 @@ VALUES
         4381,
         '1986',
         '1:17.103-Max Verstappen-2019',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Hungar%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Hungary_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\hungaro-ring.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\hungaro-ring(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'GBT00',
@@ -56,28 +88,50 @@ VALUES
         5891,
         '1950',
         '1:27.097-Max Verstappen-2020',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Great%20Britain%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Great_Britain_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\silverstone.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\silverstone(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'SPA00',
-        'Silverstone Circuit',
+        'Circuit de Barcelona-Catalunya',
         'ES',
         66,
         16,
         4655,
         '1991',
         '1:18.183-Valtteri Bottas-2020',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Spain%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Spain_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\barcelona.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\barcelona(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'BEL00',
@@ -88,12 +142,23 @@ VALUES
         7004,
         '1950',
         '1:46.286-Valtteri Bottas-2018',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Belgium%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Belgium_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\spa.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\spa(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'ITA00',
@@ -104,12 +169,23 @@ VALUES
         5793,
         '1950',
         '1:21.046-Rubens Barrichello-2004',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Italy%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Italy_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\monza.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\monza(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'ITA01',
@@ -120,12 +196,23 @@ VALUES
         5245,
         '2020',
         '1:18.833-Lewis Hamilton-2020',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Tuscany%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Tuscany_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\mugello.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\mugello(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'RUS00',
@@ -136,12 +223,23 @@ VALUES
         5848,
         '2014',
         '1:35.761-Lewis Hamilton-2019',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Russi%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Russia_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\sochi.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\sochi(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'GER00',
@@ -152,12 +250,23 @@ VALUES
         5148,
         '1951',
         '1:28.139-Max Verstappen-2020',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Germany%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Germany_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\nring.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\nring(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'POR00',
@@ -167,13 +276,24 @@ VALUES
         15,
         4653,
         '2020',
-        ' - - ',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Portugal%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Portugal_Circuit.png.transform/7col-retina/image.png'
+        '1:18.750-Lewis Hamilton-2020',
+        'C:\\data\\FormulaOne\\img\\circuits\\portimao.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\portimao(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'ITA02',
@@ -184,12 +304,23 @@ VALUES
         4909,
         '1980',
         '1:20.411-Michael Schumacher-2004',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Emilia%20Romagna%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Emilia_Romagna_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\imola.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\imola(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'TUR00',
@@ -200,12 +331,23 @@ VALUES
         5338,
         '2005',
         '1:24.770-Juan Pablo Montoya-2005',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Turkey%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Turkey_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\istanbul.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\istanbul(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'BAH00',
@@ -216,12 +358,23 @@ VALUES
         5412,
         '2004',
         '1:27.866-Charles Leclerc-2019',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Bahrain%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Bahrain_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\barhain1.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\barhain1(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'BAH01',
@@ -232,12 +385,23 @@ VALUES
         3543,
         '2020',
         ' - - ',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Sakhir%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Sakhir_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\barhain2.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\barhain2(2).png'
     );
 
 INSERT INTO
-    [Circuit]
+    [Circuit](
+        [id],
+        [name],
+        [country],
+        [laps_number],
+        [turns_number],
+        [length],
+        [first_race_year],
+        [fastest_lap],
+        [small_image],
+        [full_image]
+    )
 VALUES
     (
         'ABU01',
@@ -248,6 +412,6 @@ VALUES
         5554,
         '2019',
         '1:39.283-Lewis Hamilton-2019',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Abu%20Dhab%20carbon.png.transform/3col-retina/image.png',
-        'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Abu_Dhabi_Circuit.png.transform/7col-retina/image.png'
+        'C:\\data\\FormulaOne\\img\\circuits\\yas-marina.png',
+        'C:\\data\\FormulaOne\\img\\circuits\\yas-marina(2).png'
     );

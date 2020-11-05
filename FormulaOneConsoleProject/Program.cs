@@ -28,11 +28,12 @@ namespace FormulaOneConsoleProject {
 
         private struct Scripts {
             public static string[] Tables => new string[] {
-                "Countries.sql",
-                "Teams.sql",
-                "Drivers.sql",
-                "Circuits.sql",
-                "Gps.sql"
+                "countries.sql",
+                "teams.sql",
+                "drivers.sql",
+                "circuits.sql",
+                "races.sql",
+                "results.sql"
             };
             public static Dictionary<string, string> Constraints => new Dictionary<string, string> {
                 {"set", "setConstraints.sql" },
@@ -59,8 +60,9 @@ namespace FormulaOneConsoleProject {
                 Console.WriteLine("3: Create Drivers");
                 Console.WriteLine("4: Create Circuits");
                 Console.WriteLine("5: Create Gps");
+                Console.WriteLine("6: Create Results");
                 Console.WriteLine("0: Create all tables");
-                Console.WriteLine("--------------------------------");
+                Console.WriteLine("---------------- DATABASE MANIPULATION ----------------");
                 Console.WriteLine("S: Show tables");
                 Console.WriteLine("R: Reset DB");
                 Console.WriteLine("C: Create Constraints");
@@ -80,6 +82,7 @@ namespace FormulaOneConsoleProject {
                     case "3":
                     case "4":
                     case "5":
+                    case "6":
                         Thread th = new Thread(ConsoleWaiting);
                         if (scelta == "0") {
                             th.Start("Creating tables");
@@ -161,9 +164,16 @@ namespace FormulaOneConsoleProject {
                         break;
                     case "S":
                     case "s":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        foreach (var t in ShowTables()) {
-                            Console.WriteLine($"{t}");
+                        var tables = ShowTables();
+                        if (tables.Length > 0) {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            foreach (var t in tables) {
+                                Console.WriteLine($"{t}");
+                            }
+                        }
+                        else {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write("No tables");
                         }
                         Console.ReadKey();
 
@@ -186,7 +196,7 @@ namespace FormulaOneConsoleProject {
                     da.Fill(t);
                     foreach (DataRow row in t.Rows) {
                         Array.Resize(ref tables, tables.Length + 1);
-                        tables[tables.Length - 1] = row["TABLE_NAME"].ToString();
+                        tables[^1] = row["TABLE_NAME"].ToString();
                     }
                     return tables;
                 }
@@ -278,6 +288,7 @@ namespace FormulaOneConsoleProject {
             }
             CheckFolderFiles(Path.Combine(DATAPATH, "font"), Path.Combine(WORKINGPATH, "font"));
             CheckFolderFiles(Path.Combine(DATAPATH, "img"), Path.Combine(WORKINGPATH, "img"));
+            CheckFolderFiles(Path.Combine(DATAPATH, "img/circuits"), Path.Combine(WORKINGPATH, "img/circuits"));
         }
 
         private static void CheckFolderFiles(string oldFolder, string newFolder) {

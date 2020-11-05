@@ -1,21 +1,36 @@
-CREATE TABLE [dbo].[Team]
-(
-	[id] int PRIMARY KEY IDENTITY(1,1),
-	[SmallLogo] image NOT NULL default '',
-	[FullLogo] image NOT NULL default '',
-	[CarImage] image NOT NULL default '',
-	[Color] varchar(100) NOT NULL default '',
-	[SmallName] varchar(100) NOT NULL default '',
-	[FullName] varchar(100) UNIQUE NOT NULL default '',
-	[Base] varchar(100) NOT NULL default '',
-	[TeamChief] varchar(100) NOT NULL default '',
-	[PowerUnit] varchar(100) NOT NULL default '',
-	[CountryCode] char(2) NOT NULL default '',
-	[WorldChampionships] int default 0,
+CREATE TABLE [Team] (
+	[id] int PRIMARY KEY,
+	[full_name] varchar(100),
+	[small_name] varchar(50),
+	[base] varchar(50),
+	[chief] varchar(50),
+	[pu_constructor] varchar(50),
+	[country] char(2),
+	[championships_number] int,
+	[color] varchar(7),
+	[full_image] image,
+	[small_image] image,
+	[car_image] image
 );
 
-INSERT INTO [Team]
-VALUES(
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		0,
 		'C:\\data\\FormulaOne\\img\\alfa-car.png',
 		'C:\\data\\FormulaOne\\img\\alfa-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\alfa-team-smalllogo.png',
@@ -26,10 +41,27 @@ VALUES(
 		'Frédéric Vasseur',
 		'Ferrari',
 		'CH',
-		0        
-);
-INSERT INTO [Team]
-VALUES(
+		0
+	);
+
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		1,
 		'C:\\data\\FormulaOne\\img\\alphatauri-car.png',
 		'C:\\data\\FormulaOne\\img\\alphatauri-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\alphatauri-team-smalllogo.png',
@@ -40,10 +72,27 @@ VALUES(
 		'Franz Tost',
 		'Honda',
 		'IT',
-		0        
-);
-INSERT INTO [Team]
-VALUES(
+		0
+	);
+
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		2,
 		'C:\\data\\FormulaOne\\img\\ferrari-car.png',
 		'C:\\data\\FormulaOne\\img\\ferrari-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\ferrari-team-smalllogo.png',
@@ -54,10 +103,27 @@ VALUES(
 		'Mattia Binotto',
 		'Ferrari',
 		'IT',
-		16       
-);
-INSERT INTO [Team]
-VALUES(
+		16
+	);
+
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		3,
 		'C:\\data\\FormulaOne\\img\\haas-car.png',
 		'C:\\data\\FormulaOne\\img\\haas-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\haas-team-smalllogo.png',
@@ -68,10 +134,27 @@ VALUES(
 		'Guenther Steiner',
 		'Ferrari',
 		'US',
-		0        
-);
-INSERT INTO [Team]
-VALUES(
+		0
+	);
+
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		4,
 		'C:\\data\\FormulaOne\\img\\mac-car.png',
 		'C:\\data\\FormulaOne\\img\\mac-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\mac-team-smalllogo.png',
@@ -82,10 +165,27 @@ VALUES(
 		'Andreas Seidl',
 		'Renault',
 		'GB',
-		8        
-);
-INSERT INTO [Team]
-VALUES(
+		8
+	);
+
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		5,
 		'C:\\data\\FormulaOne\\img\\mer-car.png',
 		'C:\\data\\FormulaOne\\img\\mer-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\mer-team-smalllogo.png',
@@ -96,10 +196,27 @@ VALUES(
 		'Toto Wolff',
 		'Mercedes',
 		'GB',
-		6       
-);
-INSERT INTO [Team]
-VALUES(
+		6
+	);
+
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		6,
 		'C:\\data\\FormulaOne\\img\\red-car.png',
 		'C:\\data\\FormulaOne\\img\\red-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\red-team-smalllogo.png',
@@ -110,10 +227,27 @@ VALUES(
 		'Christian Horner',
 		'Honda',
 		'GB',
-		4        
-);
-INSERT INTO [Team]
-VALUES(
+		4
+	);
+
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		7,
 		'C:\\data\\FormulaOne\\img\\ren-car.png',
 		'C:\\data\\FormulaOne\\img\\ren-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\ren-team-smalllogo.png',
@@ -124,11 +258,27 @@ VALUES(
 		'Cyril Abiteboul',
 		'Renault',
 		'GB',
-		2        
-);
+		2
+	);
 
-INSERT INTO [Team]
-VALUES(
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		8,
 		'C:\\data\\FormulaOne\\img\\rp-car.png',
 		'C:\\data\\FormulaOne\\img\\rp-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\rp-team-smalllogo.png',
@@ -139,11 +289,27 @@ VALUES(
 		'Otmar Szafnauer',
 		'Mercedes',
 		'GB',
-		0        
-);
+		0
+	);
 
-INSERT INTO [Team]
-VALUES(
+INSERT INTO
+	[Team](
+		[id],
+		[car_image],
+		[full_image],
+		[small_image],
+		[color],
+		[full_name],
+		[small_name],
+		[base],
+		[chief],
+		[pu_constructor],
+		[country],
+		[championships_number]
+	)
+VALUES
+(
+		9,
 		'C:\\data\\FormulaOne\\img\\williams-car.png',
 		'C:\\data\\FormulaOne\\img\\williams-team-fulllogo.png',
 		'C:\\data\\FormulaOne\\img\\williams-team-smalllogo.png',
@@ -154,5 +320,5 @@ VALUES(
 		'Simon Roberts',
 		'Mercedes',
 		'GB',
-		9        
-);
+		9
+	);

@@ -1,8 +1,6 @@
-CREATE TABLE [dbo].[Country]
-(
-    [countryCode] char(2) NOT NULL default '',
-    [countryName] varchar(100) NOT NULL default '',
-    PRIMARY KEY ([countryCode])
+CREATE TABLE [Country] (
+  [iso2] char(2),
+  [name] varchar(100)
 );
 
 INSERT INTO [Country]
