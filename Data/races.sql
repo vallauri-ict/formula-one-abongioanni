@@ -1,7 +1,7 @@
 CREATE TABLE [Race] (
     [id] int PRIMARY KEY,
     [name] varchar(150),
-    [circuit_id] char(5)
+    [circuit_id] char(5),
 );
 INSERT INTO
     [Race]

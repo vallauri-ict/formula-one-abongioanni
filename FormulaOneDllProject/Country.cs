@@ -2,20 +2,20 @@
 
 namespace FormulaOneDllProject {
     internal class Country {
-        private string _countryCode;
-        private string _countryName;
+        private string _iso2;
+        private string _name;
 
         public Country(string countryCode, string countryName) {
-            _countryCode = countryCode;
-            _countryName = countryName;
+            _iso2 = countryCode;
+            _name = countryName;
         }
 
         public Country(DataRow r) {
-            _countryCode = r["countryCode"].ToString().Trim();
-            _countryName = r["countryName"].ToString().Trim();
+            _iso2 = r["iso2"].ToString().Trim();
+            _name = r["name"].ToString().Trim();
         }
 
-        public string CountryCode { get => _countryCode; set => _countryCode = value; }
-        public string CountryName { get => _countryName; set => _countryName = value; }
+        public string Iso2 { get => _iso2; set => _iso2 = value; }
+        public string Name { get => _name; set => _name = value; }
     }
 }

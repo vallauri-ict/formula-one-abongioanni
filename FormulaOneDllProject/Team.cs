@@ -12,12 +12,13 @@ namespace FormulaOneDllProject {
         private string _fullName;
         private string _base;
         private string _teamChief;
-        private string _powerUnit;
-        private string _countryCode;
+        private string _puConstructor;
+        private string _countryIso2;
         private int _worldChampionships;
         private Country _baseCountry;
+        private (Driver, Driver) _drivers;
 
-        public Team(int id, string smallLogo, string fullLogo, string carImage, string color, string smallName, string fullName, string @base, string teamChief, string powerUnit, string countryCode, int worldChampionships) {
+        public Team(int id, string smallLogo, string fullLogo, string carImage, string color, string smallName, string fullName, string @base, string teamChief, string puConstructor, string countryIso2, int worldChampionships) {
             _id = id;
             _smallLogo = smallLogo;
             _fullLogo = fullLogo;
@@ -27,24 +28,29 @@ namespace FormulaOneDllProject {
             _fullName = fullName;
             _base = @base;
             _teamChief = teamChief;
-            _powerUnit = powerUnit;
-            _countryCode = countryCode;
+            _puConstructor = puConstructor;
+            _countryIso2 = countryIso2;
             _worldChampionships = worldChampionships;
         }
 
         public Team(DataRow r) {
             _id = Convert.ToInt32(r["id"]);
-            _smallLogo = r["SmallLogo"].ToString().Trim();
-            _fullLogo = r["FullLogo"].ToString().Trim();
-            _carImage = r["CarImage"].ToString().Trim();
-            _color = r["Color"].ToString().Trim();
-            _smallName = r["SmallName"].ToString().Trim();
-            _fullName = r["FullName"].ToString().Trim();
-            _base = r["Base"].ToString().Trim();
-            _teamChief = r["TeamChief"].ToString().Trim();
-            _powerUnit = r["PowerUnit"].ToString().Trim();
-            _countryCode = r["CountryCode"].ToString().Trim();
-            _worldChampionships = Convert.ToInt32(r["WorldChampionships"]);
+            _smallLogo = r["small_image"].ToString().Trim();
+            _fullLogo = r["full_image"].ToString().Trim();
+            _carImage = r["car_image"].ToString().Trim();
+            _color = r["color"].ToString().Trim();
+            _smallName = r["small_name"].ToString().Trim();
+            _fullName = r["full_name"].ToString().Trim();
+            _base = r["base"].ToString().Trim();
+            _teamChief = r["chief"].ToString().Trim();
+            _puConstructor = r["pu_constructor"].ToString().Trim();
+            _countryIso2 = r["country"].ToString().Trim();
+            _worldChampionships = Convert.ToInt32(r["championships_number"]);
+        }
+
+        public void SetDrivers(Driver d1, Driver d2) {
+            _drivers.Item1 = d1;
+            _drivers.Item2 = d2;
         }
 
         public int Id { get => _id; set => _id = value; }
@@ -56,10 +62,10 @@ namespace FormulaOneDllProject {
         public string FullName { get => _fullName; set => _fullName = value; }
         public string Base { get => _base; set => _base = value; }
         public string TeamChief { get => _teamChief; set => _teamChief = value; }
-        public string PowerUnit { get => _powerUnit; set => _powerUnit = value; }
-        public string CountryCode { get => _countryCode; set => _countryCode = value; }
+        public string PuConstructor { get => _puConstructor; set => _puConstructor = value; }
+        public string CountryIso2 { get => _countryIso2; set => _countryIso2 = value; }
         public int WorldChampionships { get => _worldChampionships; set => _worldChampionships = value; }
         public Country BaseCountry { get => _baseCountry; set => _baseCountry = value; }
-
+        public (Driver, Driver) Drivers { get => _drivers; }
     }
 }
