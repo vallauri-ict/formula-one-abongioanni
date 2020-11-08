@@ -1,7 +1,7 @@
 ﻿using System.Data;
 
 namespace FormulaOneDllProject {
-    internal class Country {
+    public class Country {
         private string _iso2;
         private string _name;
 

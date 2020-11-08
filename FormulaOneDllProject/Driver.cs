@@ -1,10 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 
 namespace FormulaOneDllProject {
-    internal class Driver {
-        private string _helmetImage;
-        private string _fullImage;
+    public class Paths {
+        public const string WORKINGPATH = @"C:\data\FormulaOne\";
+        public const string DATAPATH = @"..\..\..\..\Data";
+        public const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
+    }
+
+    public class Driver {
+        private Byte[] _helmetImage;
+        private Byte[] _fullImage;
         private string _fullName;
         private int _number;
         private int _podiums;
@@ -13,7 +22,7 @@ namespace FormulaOneDllProject {
         private Country _driverCountry;
         private int _teamId;
 
-        public Driver(string helmetImage, string fullImage, string fullName, int number, string countryIso2, int podiums, DateTime dob, int teamId) {
+        public Driver(Byte[] helmetImage, Byte[] fullImage, string fullName, int number, string countryIso2, int podiums, DateTime dob, int teamId) {
             _helmetImage = helmetImage;
             _fullImage = fullImage;
             _fullName = fullName;
@@ -25,17 +34,32 @@ namespace FormulaOneDllProject {
         }
 
         public Driver(DataRow r) {
-            _helmetImage = r["helmet_image"].ToString().Trim();
-            _fullImage = r["full_image"].ToString().Trim();
-            _fullName = r["full_name"].ToString().Trim();
-            _number = Convert.ToInt32(r["number"]);
-            _podiums = Convert.ToInt32(r["podiums_number"]);
-            _countryIso2 = r["country"].ToString().Trim();
-            _teamId = Convert.ToInt32(r["team_id"]);
+            _helmetImage = (Byte[])r["helmet_image"];
+            _fullImage = (Byte[])r["full_image"];
+            _fullName = r.Field<string>("full_name").Trim();
+            _number = r.Field<int>("number");
+            _podiums = r.Field<int>("podiums_number");
+            _countryIso2 = r.Field<string>("country").Trim();
+            _teamId = r.Field<int>("team_id");
         }
 
-        public string HelmetImage { get => _helmetImage; set => _helmetImage = value; }
-        public string FullImage { get => _fullImage; set => _fullImage = value; }
+        public static IEnumerable<Driver> GetDrivers() {
+            List<Driver> drivers = new List<Driver>();
+            using (SqlConnection connection = new SqlConnection(Paths.CONNECTION_STRING)) {
+                using (SqlCommand cmd = new SqlCommand("SELECT * FROM Driver;", connection)) {
+                    var t = new DataTable();
+                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                    sda.Fill(t);
+                    foreach (DataRow r in t.Rows) {
+                        drivers.Add(new Driver(r));
+                    }
+                    return drivers;
+                }
+            }
+        }
+
+        public Byte[] HelmetImage { get => _helmetImage; set => _helmetImage = value; }
+        public Byte[] FullImage { get => _fullImage; set => _fullImage = value; }
         public string FullName { get => _fullName; set => _fullName = value; }
         public int Number { get => _number; set => _number = value; }
         public int Podiums { get => _podiums; set => _podiums = value; }
