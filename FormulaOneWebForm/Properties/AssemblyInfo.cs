@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
-[assembly: AssemblyTitle("FormulaOneWebFormProject")]
+[assembly: AssemblyTitle("FormulaOneWebForm")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FormulaOneWebFormProject")]
+[assembly: AssemblyProduct("FormulaOneWebForm")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Se il progetto viene esposto a COM, il GUID seguente verrà utilizzato per creare l'ID della libreria dei tipi
-[assembly: Guid("fade680e-2d6a-4509-876e-c605226c1f41")]
+[assembly: Guid("9a6e5807-adf1-4100-9602-c1a0c378bf58")]
 
 // Le informazioni sulla versione di un assembly sono costituite dai quattro valori seguenti:
 //
