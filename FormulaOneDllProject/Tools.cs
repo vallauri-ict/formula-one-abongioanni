@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
@@ -6,52 +7,80 @@ using System.IO;
 namespace FormulaOneDllProject {
     public class Tools {
 
-        public static (bool, string) ExecuteSqlCommands(string query, string CONNECTION_STRING) {
-            return ExecuteSqlCommands(new string[] { query }, CONNECTION_STRING);
+        private string connection_string;
+
+        public Tools(string CONNECTION_STRING) {
+            this.CONNECTION_STRING = CONNECTION_STRING;
         }
 
-        public static (bool, string) ExecuteSqlCommands(string[] queries, string CONNECTION_STRING) {
+        public string CONNECTION_STRING { get => connection_string; set => connection_string = value; }
+
+        public (bool, string) ExecuteSqlCommands(string query) {
             bool err = false;
             string strErr = "";
             using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
                 connection.Open();
                 using (SqlCommand cmd = new SqlCommand("query", connection)) {
-                    int i = 0;
-                    foreach (var query in queries) {
-                        cmd.CommandText = query;
-                        i++;
-                        try {
-                            cmd.ExecuteNonQuery();
-                        }
-                        catch (SqlException se) {
-                            err = true;
-                            strErr = se.Message;
-                        }
+                    cmd.CommandText = query;
+                    try {
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (SqlException se) {
+                        err = true;
+                        strErr = se.Message;
                     }
                 }
             }
             return (err, strErr);
         }
 
-        public static bool ExecuteSqlScript(string[] paths, string CONNECTION_STRING) {
+        public (bool, string) ExecuteSqlCommands(string[] queries) {
+            (bool, string) err = (true, "");
+            foreach (var query in queries) {
+                err = ExecuteSqlCommands(query);
+            }
+            return err;
+        }
+
+        public (bool, object) GetRecords(string query) {
+            bool err = false;
+            object result = new DataTable();
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand("query", connection)) {
+                    cmd.CommandText = query;
+                    try {
+                        SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
+                        sqlData.Fill((DataSet)result);
+                    }
+                    catch (SqlException se) {
+                        err = true;
+                        result = se.Message;
+                    }
+                }
+            }
+            return (err, result);
+        }
+
+        public bool ExecuteSqlScript(string[] paths) {
             bool result = true;
             foreach (var path in paths) {
-                result = Tools.ExecuteSqlScript(path, CONNECTION_STRING);
+                result = ExecuteSqlScript(path);
             }
             return result;
         }
 
-        public static bool ExecuteSqlScript(string path, string CONNECTION_STRING) {
+        public bool ExecuteSqlScript(string path) {
             string fileContent = File.ReadAllText(path);
             fileContent = fileContent.Replace("\r\n", "")
                 .Replace("\r", "")
                 .Replace("\n", "")
                 .Replace("\t", "");
-            var err = Tools.ExecuteSqlCommands(fileContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries), CONNECTION_STRING);
+            var err = ExecuteSqlCommands(fileContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
             return !err.Item1;
         }
 
-        public static string[] ShowTables(string CONNECTION_STRING) {
+        public string[] ShowTables() {
             using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
                 connection.Open();
                 using (SqlCommand cmd = new SqlCommand("SELECT TABLE_NAME  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'", connection)) {
@@ -68,7 +97,7 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public static void BackupDb(string CONNECTION_STRING, string WORKINGPATH) {
+        public void Backup(string WORKINGPATH) {
             try {
                 using (SqlConnection dbConn = new SqlConnection()) {
                     dbConn.ConnectionString = CONNECTION_STRING;
@@ -105,17 +134,31 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public static (bool, string) DropConstraints(string CONNECTION_STRING) {
-            return Tools.ExecuteSqlCommands(new string[]{
+        public (bool, string) DropConstraints() {
+            return ExecuteSqlCommands(new string[]{
                             "IF EXISTS(SELECT * FROM [Team]) DROP TABLE[Team];",
                             "IF EXISTS(SELECT * FROM [Driver]) DROP TABLE[Driver];",
                             "IF EXISTS(SELECT * FROM [Country]) DROP TABLE[Country];",
                             "IF EXISTS(SELECT * FROM [Circuit]) DROP TABLE[Circuit];",
                             "IF EXISTS(SELECT * FROM [GP]) DROP TABLE[GP];"
-                        }, CONNECTION_STRING);
+                        });
         }
 
-        public static void RestoreDb(string CONNECTION_STRING, string WORKINGPATH) {
+        public List<Country> GetCountries() {
+            List<Country> countryList = new List<Country>();
+            var result = GetRecords("SELECT * FROM Country;");
+            if (!result.Item1) {
+                foreach (DataRow row in ((DataTable)result.Item2).Rows) {
+                    countryList.Add(new Country(row));
+                }
+                return countryList;
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public void Restore(string WORKINGPATH) {
             try {
                 using (SqlConnection con = new SqlConnection(CONNECTION_STRING)) {
                     con.Open();

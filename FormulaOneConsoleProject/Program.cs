@@ -29,7 +29,7 @@ namespace FormulaOneConsoleProject {
         private static void Main(string[] args) {
             CheckWorkData();
             Console.WriteLine("\t\t\t=== FORMULA ONE - BATCH ACTIONS ===");
-
+            Tools dbTools = new Tools(CONNECTION_STRING);
             string scelta;
             do {
                 Console.ForegroundColor = ConsoleColor.White;
@@ -63,19 +63,19 @@ namespace FormulaOneConsoleProject {
                     case "5":
                     case "6":
                         if (scelta == "0") {
-                            Tools.ExecuteSqlScript(Scripts.Tables, CONNECTION_STRING);
+                            dbTools.ExecuteSqlScript(Scripts.Tables);
                         }
                         else {
                             string file = Scripts.Tables[Convert.ToInt32(scelta) - 1];
-                            Tools.ExecuteSqlScript(Path.Combine(WORKINGPATH,file), CONNECTION_STRING);
+                            dbTools.ExecuteSqlScript(Path.Combine(WORKINGPATH, file));
                         }
                         Console.ReadKey();
 
                         break;
                     case "R":
                     case "r":
-                        Tools.ExecuteSqlScript(Scripts.Constraints["delete"], CONNECTION_STRING);
-                        err = Tools.DropConstraints(CONNECTION_STRING);
+                        dbTools.ExecuteSqlScript(Scripts.Constraints["delete"]);
+                        err = dbTools.DropConstraints();
                         Console.ForegroundColor = ConsoleColor.Green;
                         if (!err.Item1) {
                             Console.WriteLine($"\nTables have been deleted succesfully!");
@@ -87,14 +87,14 @@ namespace FormulaOneConsoleProject {
                                 c = Console.ReadLine().ToUpper();
                             } while (c != "Y" && c != "N");
                             if (c == "Y") {
-                                Tools.ExecuteSqlScript(Scripts.Tables, CONNECTION_STRING);
+                                dbTools.ExecuteSqlScript(Scripts.Tables);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 do {
                                     Console.Write("Do you want to create all the constraints? [y/n]: ");
                                     c = Console.ReadLine().ToUpper();
                                 } while (c != "Y" && c != "N");
                                 if (c == "Y") {
-                                    Tools.ExecuteSqlScript(Scripts.Constraints["set"], CONNECTION_STRING);
+                                    dbTools.ExecuteSqlScript(Scripts.Constraints["set"]);
                                     Console.ReadKey();
                                 }
                             }
@@ -107,7 +107,7 @@ namespace FormulaOneConsoleProject {
                         break;
                     case "B":
                     case "b":
-                        Tools.BackupDb(CONNECTION_STRING, WORKINGPATH);
+                        dbTools.Backup(WORKINGPATH);
                         Console.ReadKey();
 
                         break;
@@ -116,23 +116,23 @@ namespace FormulaOneConsoleProject {
                     case "D":
                     case "d":
                         if (scelta.ToUpper() == "C") {
-                            Tools.ExecuteSqlScript(Scripts.Constraints["set"], CONNECTION_STRING);
+                            dbTools.ExecuteSqlScript(Scripts.Constraints["set"]);
                         }
                         else {
-                            Tools.ExecuteSqlScript(Scripts.Constraints["delete"], CONNECTION_STRING);
+                            dbTools.ExecuteSqlScript(Scripts.Constraints["delete"]);
                         }
                         Console.ReadKey();
 
                         break;
                     case "G":
                     case "g":
-                        Tools.RestoreDb(CONNECTION_STRING,WORKINGPATH);
+                        dbTools.Restore(WORKINGPATH);
                         Console.ReadKey();
 
                         break;
                     case "S":
                     case "s":
-                        var tables = Tools.ShowTables(CONNECTION_STRING);
+                        var tables = dbTools.ShowTables();
                         if (tables.Length > 0) {
                             Console.ForegroundColor = ConsoleColor.Green;
                             foreach (var t in tables) {
