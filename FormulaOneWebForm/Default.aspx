@@ -9,15 +9,11 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-            <asp:Button runat="server" Text="invia" />
-            <br />
-            <asp:Label runat="server" Text=" " />
-            <br />
-        </div>
-        <div>
-            <asp:ListBox ID="cmbCountries" runat="server"></asp:ListBox>
-        </div>
+        <asp:DropDownList ID="cmb" runat="server" OnSelectedIndexChanged="cmbCountries_SelectedIndexChanged" AutoPostBack="true">
+        </asp:DropDownList><br />
+        <br />
+        <br />
+        <asp:GridView ID="content" runat="server"></asp:GridView>
     </form>
 </body>
 </html>

@@ -42,7 +42,7 @@ namespace FormulaOneDllProject {
             return err;
         }
 
-        public (bool, object) GetRecords(string query) {
+        private (bool, object) GetRecords(string query) {
             bool err = false;
             object result = new DataTable();
             using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
@@ -51,7 +51,7 @@ namespace FormulaOneDllProject {
                     cmd.CommandText = query;
                     try {
                         SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
-                        sqlData.Fill((DataSet)result);
+                        sqlData.Fill((DataTable)result);
                     }
                     catch (SqlException se) {
                         err = true;
@@ -62,22 +62,22 @@ namespace FormulaOneDllProject {
             return (err, result);
         }
 
-        public bool ExecuteSqlScript(string[] paths) {
-            bool result = true;
+        public (bool, string) ExecuteSqlScript(string[] paths) {
+            (bool, string) result = (true, "");
             foreach (var path in paths) {
                 result = ExecuteSqlScript(path);
             }
             return result;
         }
 
-        public bool ExecuteSqlScript(string path) {
+        public (bool, string) ExecuteSqlScript(string path) {
             string fileContent = File.ReadAllText(path);
             fileContent = fileContent.Replace("\r\n", "")
                 .Replace("\r", "")
                 .Replace("\n", "")
                 .Replace("\t", "");
             var err = ExecuteSqlCommands(fileContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
-            return !err.Item1;
+            return err;
         }
 
         public string[] ShowTables() {
@@ -90,7 +90,7 @@ namespace FormulaOneDllProject {
                     da.Fill(t);
                     foreach (DataRow row in t.Rows) {
                         Array.Resize(ref tables, tables.Length + 1);
-                        tables[^1] = row["TABLE_NAME"].ToString();
+                        tables[tables.Length - 1] = row["TABLE_NAME"].ToString();
                     }
                     return tables;
                 }
@@ -134,24 +134,118 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public (bool, string) DropConstraints() {
+        public (bool, string) DropTable() {
             return ExecuteSqlCommands(new string[]{
                             "IF EXISTS(SELECT * FROM [Team]) DROP TABLE[Team];",
                             "IF EXISTS(SELECT * FROM [Driver]) DROP TABLE[Driver];",
                             "IF EXISTS(SELECT * FROM [Country]) DROP TABLE[Country];",
                             "IF EXISTS(SELECT * FROM [Circuit]) DROP TABLE[Circuit];",
-                            "IF EXISTS(SELECT * FROM [GP]) DROP TABLE[GP];"
+                            "IF EXISTS(SELECT * FROM [Race]) DROP TABLE[Race];"
                         });
         }
 
-        public List<Country> GetCountries() {
+        public List<Country> GetCountryList() {
             List<Country> countryList = new List<Country>();
+            foreach (DataRow row in GetCountry().Rows) {
+                countryList.Add(new Country(row));
+            }
+            return countryList;
+        }
+
+        public DataTable GetCountry() {
             var result = GetRecords("SELECT * FROM Country;");
             if (!result.Item1) {
-                foreach (DataRow row in ((DataTable)result.Item2).Rows) {
-                    countryList.Add(new Country(row));
-                }
-                return countryList;
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Driver> GetDriverList() {
+            List<Driver> driverList = new List<Driver>();
+            foreach (DataRow row in GetDriver().Rows) {
+                driverList.Add(new Driver(row));
+            }
+            return driverList;
+        }
+
+        public DataTable GetDriver() {
+            var result = GetRecords("SELECT * FROM Driver;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Team> GetTeamList() {
+            List<Team> teamList = new List<Team>();
+            foreach (DataRow row in GetTeam().Rows) {
+                teamList.Add(new Team(row));
+            }
+            return teamList;
+        }
+
+        public DataTable GetTeam() {
+            var result = GetRecords("SELECT * FROM Team;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Circuit> GetCircuitList() {
+            List<Circuit> circuitList = new List<Circuit>();
+            foreach (DataRow row in GetCircuit().Rows) {
+                circuitList.Add(new Circuit(row));
+            }
+            return circuitList;
+        }
+
+        public DataTable GetCircuit() {
+            var result = GetRecords("SELECT * FROM Circuit;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Race> GetRaceList() {
+            List<Race> raceList = new List<Race>();
+            foreach (DataRow row in GetRace().Rows) {
+                raceList.Add(new Race(row));
+            }
+            return raceList;
+        }
+
+        public DataTable GetRace() {
+            var result = GetRecords("SELECT * FROM Race;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Result> GetResultList() {
+            List<Result> resultList = new List<Result>();
+            foreach (DataRow row in GetResult().Rows) {
+                resultList.Add(new Result(row));
+            }
+            return resultList;
+        }
+
+        public DataTable GetResult() {
+            var result = GetRecords("SELECT * FROM Result;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
             }
             else {
                 throw new Exception(result.Item2.ToString());

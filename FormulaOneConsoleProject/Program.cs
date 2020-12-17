@@ -9,16 +9,16 @@ namespace FormulaOneConsoleProject {
 
         private struct Scripts {
             public static string[] Tables => new string[] {
-                "countries.sql",
-                "teams.sql",
-                "drivers.sql",
-                "circuits.sql",
-                "races.sql",
-                "results.sql"
+                Path.Combine(WORKINGPATH, "countries.sql"),
+                Path.Combine(WORKINGPATH, "teams.sql"),
+                Path.Combine(WORKINGPATH, "drivers.sql"),
+                Path.Combine(WORKINGPATH, "circuits.sql"),
+                Path.Combine(WORKINGPATH, "races.sql"),
+                Path.Combine(WORKINGPATH, "results.sql")
             };
             public static Dictionary<string, string> Constraints => new Dictionary<string, string> {
-                {"set", "setConstraints.sql" },
-                {"delete", "deleteConstraints.sql" }
+                {"set", Path.Combine(WORKINGPATH,"setConstraints.sql" )},
+                {"delete", Path.Combine(WORKINGPATH,"deleteConstraints.sql") }
             };
         }
 
@@ -30,6 +30,7 @@ namespace FormulaOneConsoleProject {
             CheckWorkData();
             Console.WriteLine("\t\t\t=== FORMULA ONE - BATCH ACTIONS ===");
             Tools dbTools = new Tools(CONNECTION_STRING);
+
             string scelta;
             do {
                 Console.ForegroundColor = ConsoleColor.White;
@@ -63,11 +64,18 @@ namespace FormulaOneConsoleProject {
                     case "5":
                     case "6":
                         if (scelta == "0") {
-                            dbTools.ExecuteSqlScript(Scripts.Tables);
+                            err = dbTools.ExecuteSqlScript(Scripts.Tables);
                         }
                         else {
                             string file = Scripts.Tables[Convert.ToInt32(scelta) - 1];
-                            dbTools.ExecuteSqlScript(Path.Combine(WORKINGPATH, file));
+                            err = dbTools.ExecuteSqlScript(file);
+                        }
+                        if (!err.Item1) {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Done!");
+                        }
+                        else {
+                            Console.WriteLine(err.Item2);
                         }
                         Console.ReadKey();
 
@@ -75,7 +83,7 @@ namespace FormulaOneConsoleProject {
                     case "R":
                     case "r":
                         dbTools.ExecuteSqlScript(Scripts.Constraints["delete"]);
-                        err = dbTools.DropConstraints();
+                        err = dbTools.DropTable();
                         Console.ForegroundColor = ConsoleColor.Green;
                         if (!err.Item1) {
                             Console.WriteLine($"\nTables have been deleted succesfully!");
@@ -87,7 +95,10 @@ namespace FormulaOneConsoleProject {
                                 c = Console.ReadLine().ToUpper();
                             } while (c != "Y" && c != "N");
                             if (c == "Y") {
-                                dbTools.ExecuteSqlScript(Scripts.Tables);
+                                err = dbTools.ExecuteSqlScript(Scripts.Tables);
+                                if (!err.Item1) {
+                                    Console.WriteLine("Done!");
+                                }
                                 Console.ForegroundColor = ConsoleColor.White;
                                 do {
                                     Console.Write("Do you want to create all the constraints? [y/n]: ");
@@ -150,6 +161,7 @@ namespace FormulaOneConsoleProject {
                     default:
                         break;
                 }
+                Console.ForegroundColor = ConsoleColor.White;
             } while (scelta.ToUpper() != "X");
         }
 

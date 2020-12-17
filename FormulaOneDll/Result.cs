@@ -4,7 +4,7 @@ using System.Data;
 using System.Text;
 
 namespace FormulaOneDllProject {
-    class Result {
+    public class Result {
         int _raceId;
         int _driverId;
         int _teamId;
@@ -38,7 +38,7 @@ namespace FormulaOneDllProject {
             _teamId = Convert.ToInt32(r["team_id"]);
             _position = Convert.ToInt32(r["position"]);
             _time = r["time"].ToString().Trim();
-            _time = $"{_time[0]}:{_time.Substring(1,2)}:{_time.Substring(3, 2)}.{_time.Substring(5)}";
+            _time = $"{_time[0]}:{_time.Substring(1, 2)}:{_time.Substring(3, 2)}.{_time.Substring(5)}";
             _laps = Convert.ToInt32(r["laps_number"]);
             _fastestLap = r["fastest_lap"].ToString().Trim();
             _fastestLap = $"{_fastestLap[0]}:{_fastestLap.Substring(1, 2)}.{_fastestLap.Substring(3)}";

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FormulaOneDllProject\FormulaOneDll.csproj" />
+    <ProjectReference Include="..\FormulaOneDll\FormulaOneDll.csproj" />
   </ItemGroup>
 
 </Project>

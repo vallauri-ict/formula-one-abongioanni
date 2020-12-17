@@ -2,7 +2,7 @@
 using System.Data;
 
 namespace FormulaOneDllProject {
-    internal class Circuit {
+    public class Circuit {
         private string _id;
         private string _name;
         private string _countryIso2;

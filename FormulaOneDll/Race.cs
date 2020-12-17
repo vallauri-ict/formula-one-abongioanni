@@ -2,7 +2,7 @@
 using System.Data;
 
 namespace FormulaOneDllProject {
-    internal class Race {
+    public class Race {
         private string _id;
         private string _name;
         private string _circuitId;

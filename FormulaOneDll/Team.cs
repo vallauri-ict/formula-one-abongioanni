@@ -2,7 +2,7 @@
 using System.Data;
 
 namespace FormulaOneDllProject {
-    internal class Team {
+    public class Team {
         private int _id;
         private string _smallLogo;
         private string _fullLogo;
