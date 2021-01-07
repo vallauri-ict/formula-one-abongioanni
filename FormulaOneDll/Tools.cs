@@ -15,7 +15,7 @@ namespace FormulaOneDllProject {
 
         public string CONNECTION_STRING { get => connection_string; set => connection_string = value; }
 
-        public (bool, string) ExecuteSqlCommands(string query) {
+        public (bool, string) ExecuteCommand(string query) {
             bool err = false;
             string strErr = "";
             using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
@@ -34,12 +34,30 @@ namespace FormulaOneDllProject {
             return (err, strErr);
         }
 
-        public (bool, string) ExecuteSqlCommands(string[] queries) {
+        public (bool, string) ExecuteCommand(string[] queries) {
             (bool, string) err = (true, "");
             foreach (var query in queries) {
-                err = ExecuteSqlCommands(query);
+                err = ExecuteCommand(query);
             }
             return err;
+        }
+
+        public (bool, string) ExecuteScript(string path) {
+            string fileContent = File.ReadAllText(path);
+            fileContent = fileContent.Replace("\r\n", "")
+                .Replace("\r", "")
+                .Replace("\n", "")
+                .Replace("\t", "");
+            var err = ExecuteCommand(fileContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+            return err;
+        }
+
+        public (bool, string) ExecuteScript(string[] paths) {
+            (bool, string) result = (true, "");
+            foreach (var path in paths) {
+                result = ExecuteScript(path);
+            }
+            return result;
         }
 
         private (bool, object) GetRecords(string query) {
@@ -62,24 +80,6 @@ namespace FormulaOneDllProject {
             return (err, result);
         }
 
-        public (bool, string) ExecuteSqlScript(string[] paths) {
-            (bool, string) result = (true, "");
-            foreach (var path in paths) {
-                result = ExecuteSqlScript(path);
-            }
-            return result;
-        }
-
-        public (bool, string) ExecuteSqlScript(string path) {
-            string fileContent = File.ReadAllText(path);
-            fileContent = fileContent.Replace("\r\n", "")
-                .Replace("\r", "")
-                .Replace("\n", "")
-                .Replace("\t", "");
-            var err = ExecuteSqlCommands(fileContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
-            return err;
-        }
-
         public string[] ShowTables() {
             using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
                 connection.Open();
@@ -94,6 +94,114 @@ namespace FormulaOneDllProject {
                     }
                     return tables;
                 }
+            }
+        }
+
+        public List<Country> GetCountryList() {
+            List<Country> countryList = new List<Country>();
+            foreach (DataRow row in GetCountryTable().Rows) {
+                countryList.Add(new Country(row));
+            }
+            return countryList;
+        }
+
+        public DataTable GetCountryTable() {
+            var result = GetRecords("SELECT * FROM Country;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Driver> GetDriverList() {
+            List<Driver> driverList = new List<Driver>();
+            foreach (DataRow row in GetDriverTable().Rows) {
+                driverList.Add(new Driver(row));
+            }
+            return driverList;
+        }
+
+        public DataTable GetDriverTable() {
+            var result = GetRecords("SELECT * FROM Driver;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Team> GetTeamList() {
+            List<Team> teamList = new List<Team>();
+            foreach (DataRow row in GetTeamTable().Rows) {
+                teamList.Add(new Team(row));
+            }
+            return teamList;
+        }
+
+        public DataTable GetTeamTable() {
+            var result = GetRecords("SELECT * FROM Team;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Circuit> GetCircuitList() {
+            List<Circuit> circuitList = new List<Circuit>();
+            foreach (DataRow row in GetCircuitTable().Rows) {
+                circuitList.Add(new Circuit(row));
+            }
+            return circuitList;
+        }
+
+        public DataTable GetCircuitTable() {
+            var result = GetRecords("SELECT * FROM Circuit;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Race> GetRaceList() {
+            List<Race> raceList = new List<Race>();
+            foreach (DataRow row in GetRaceTable().Rows) {
+                raceList.Add(new Race(row));
+            }
+            return raceList;
+        }
+
+        public DataTable GetRaceTable() {
+            var result = GetRecords("SELECT * FROM Race;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public List<Result> GetResultList() {
+            List<Result> resultList = new List<Result>();
+            foreach (DataRow row in GetResultTable().Rows) {
+                resultList.Add(new Result(row));
+            }
+            return resultList;
+        }
+
+        public DataTable GetResultTable() {
+            var result = GetRecords("SELECT * FROM Result;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
             }
         }
 
@@ -131,124 +239,6 @@ namespace FormulaOneDllProject {
 
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
-            }
-        }
-
-        public (bool, string) DropTable() {
-            return ExecuteSqlCommands(new string[]{
-                            "IF EXISTS(SELECT * FROM [Team]) DROP TABLE[Team];",
-                            "IF EXISTS(SELECT * FROM [Driver]) DROP TABLE[Driver];",
-                            "IF EXISTS(SELECT * FROM [Country]) DROP TABLE[Country];",
-                            "IF EXISTS(SELECT * FROM [Circuit]) DROP TABLE[Circuit];",
-                            "IF EXISTS(SELECT * FROM [Race]) DROP TABLE[Race];"
-                        });
-        }
-
-        public List<Country> GetCountryList() {
-            List<Country> countryList = new List<Country>();
-            foreach (DataRow row in GetCountry().Rows) {
-                countryList.Add(new Country(row));
-            }
-            return countryList;
-        }
-
-        public DataTable GetCountry() {
-            var result = GetRecords("SELECT * FROM Country;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public List<Driver> GetDriverList() {
-            List<Driver> driverList = new List<Driver>();
-            foreach (DataRow row in GetDriver().Rows) {
-                driverList.Add(new Driver(row));
-            }
-            return driverList;
-        }
-
-        public DataTable GetDriver() {
-            var result = GetRecords("SELECT * FROM Driver;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public List<Team> GetTeamList() {
-            List<Team> teamList = new List<Team>();
-            foreach (DataRow row in GetTeam().Rows) {
-                teamList.Add(new Team(row));
-            }
-            return teamList;
-        }
-
-        public DataTable GetTeam() {
-            var result = GetRecords("SELECT * FROM Team;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public List<Circuit> GetCircuitList() {
-            List<Circuit> circuitList = new List<Circuit>();
-            foreach (DataRow row in GetCircuit().Rows) {
-                circuitList.Add(new Circuit(row));
-            }
-            return circuitList;
-        }
-
-        public DataTable GetCircuit() {
-            var result = GetRecords("SELECT * FROM Circuit;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public List<Race> GetRaceList() {
-            List<Race> raceList = new List<Race>();
-            foreach (DataRow row in GetRace().Rows) {
-                raceList.Add(new Race(row));
-            }
-            return raceList;
-        }
-
-        public DataTable GetRace() {
-            var result = GetRecords("SELECT * FROM Race;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public List<Result> GetResultList() {
-            List<Result> resultList = new List<Result>();
-            foreach (DataRow row in GetResult().Rows) {
-                resultList.Add(new Result(row));
-            }
-            return resultList;
-        }
-
-        public DataTable GetResult() {
-            var result = GetRecords("SELECT * FROM Result;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
             }
         }
 

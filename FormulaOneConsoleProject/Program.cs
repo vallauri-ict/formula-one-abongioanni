@@ -20,6 +20,7 @@ namespace FormulaOneConsoleProject {
                 {"set", Path.Combine(WORKINGPATH,"setConstraints.sql" )},
                 {"delete", Path.Combine(WORKINGPATH,"deleteConstraints.sql") }
             };
+            public static string DropTables = Path.Combine(WORKINGPATH, "dropTables.sql");
         }
 
         public const string WORKINGPATH = @"C:\data\FormulaOne\";
@@ -64,11 +65,11 @@ namespace FormulaOneConsoleProject {
                     case "5":
                     case "6":
                         if (scelta == "0") {
-                            err = dbTools.ExecuteSqlScript(Scripts.Tables);
+                            err = dbTools.ExecuteScript(Scripts.Tables);
                         }
                         else {
                             string file = Scripts.Tables[Convert.ToInt32(scelta) - 1];
-                            err = dbTools.ExecuteSqlScript(file);
+                            err = dbTools.ExecuteScript(file);
                         }
                         if (!err.Item1) {
                             Console.ForegroundColor = ConsoleColor.Green;
@@ -82,8 +83,8 @@ namespace FormulaOneConsoleProject {
                         break;
                     case "R":
                     case "r":
-                        dbTools.ExecuteSqlScript(Scripts.Constraints["delete"]);
-                        err = dbTools.DropTable();
+                        dbTools.ExecuteScript(Scripts.Constraints["delete"]);
+                        err = dbTools.ExecuteScript(Scripts.DropTables);
                         Console.ForegroundColor = ConsoleColor.Green;
                         if (!err.Item1) {
                             Console.WriteLine($"\nTables have been deleted succesfully!");
@@ -95,7 +96,7 @@ namespace FormulaOneConsoleProject {
                                 c = Console.ReadLine().ToUpper();
                             } while (c != "Y" && c != "N");
                             if (c == "Y") {
-                                err = dbTools.ExecuteSqlScript(Scripts.Tables);
+                                err = dbTools.ExecuteScript(Scripts.Tables);
                                 if (!err.Item1) {
                                     Console.WriteLine("Done!");
                                 }
@@ -105,7 +106,7 @@ namespace FormulaOneConsoleProject {
                                     c = Console.ReadLine().ToUpper();
                                 } while (c != "Y" && c != "N");
                                 if (c == "Y") {
-                                    dbTools.ExecuteSqlScript(Scripts.Constraints["set"]);
+                                    dbTools.ExecuteScript(Scripts.Constraints["set"]);
                                     Console.ReadKey();
                                 }
                             }
@@ -127,10 +128,10 @@ namespace FormulaOneConsoleProject {
                     case "D":
                     case "d":
                         if (scelta.ToUpper() == "C") {
-                            dbTools.ExecuteSqlScript(Scripts.Constraints["set"]);
+                            dbTools.ExecuteScript(Scripts.Constraints["set"]);
                         }
                         else {
-                            dbTools.ExecuteSqlScript(Scripts.Constraints["delete"]);
+                            dbTools.ExecuteScript(Scripts.Constraints["delete"]);
                         }
                         Console.ReadKey();
 

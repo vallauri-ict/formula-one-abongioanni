@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using FormulaOneDllProject;
@@ -12,36 +14,49 @@ namespace FormulaOneWebForm {
         protected void Page_Load(object sender, EventArgs e) {
             dbTools = new Tools(CONNECTION_STRING);
             if (!Page.IsPostBack) {
-                cmb.DataSource = dbTools.ShowTables();
-                cmbCountries_SelectedIndexChanged(cmb, new EventArgs());
+                string[] elem = dbTools.ShowTables();
+                Array.Sort(elem);
+                cmb.DataSource = elem;
             }
             cmb.DataBind();
+            cmbCountries_SelectedIndexChanged(cmb, new EventArgs());
+            content.DataBound += Content_DataBound;
+        }
+
+        private void Content_DataBound(object sender, EventArgs e) {
+            if (cmb.SelectedValue == "Team") {
+                foreach (GridViewRow row in content.Rows) {
+                    string color = row.Cells[row.Cells.Count - 1].Text;
+                    row.Cells[row.Cells.Count - 1].Text = "";
+                    row.Cells[row.Cells.Count - 1].BackColor = ColorTranslator.FromHtml(color);
+                }
+            }
         }
 
         protected void cmbCountries_SelectedIndexChanged(object sender, EventArgs e) {
             switch (((DropDownList)sender).SelectedValue) {
                 case "Country": {
-                        content.DataSource = dbTools.GetCountry();
+                        content.DataSource = dbTools.GetCountryTable();
                         break;
                     }
                 case "Team": {
-                        content.DataSource = dbTools.GetTeam();
+                        content.DataSource = dbTools.GetTeamTable();
                         break;
                     }
                 case "Driver": {
-                        content.DataSource = dbTools.GetDriver();
+                        content.DataSource = dbTools.GetDriverTable();
                         break;
                     }
                 case "Circuit": {
-                        content.DataSource = dbTools.GetCircuit();
+                        content.DataSource = dbTools.GetCircuitTable();
                         break;
                     }
                 case "Race": {
-                        content.DataSource = dbTools.GetRace();
+                        content.DataSource = dbTools.GetRaceTable();
                         break;
                     }
                 case "Result": {
-                        content.DataSource = dbTools.GetResult();
+                        content.DataSource = dbTools.GetResultTable();
                         break;
                     }
                 default:
