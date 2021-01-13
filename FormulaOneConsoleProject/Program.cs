@@ -51,7 +51,7 @@ namespace FormulaOneConsoleProject {
                 Console.WriteLine("D: Delete Constraints");
                 Console.WriteLine("B: Backup DB");
                 Console.WriteLine("G: Get Backup DB");
-                Console.WriteLine("X: Exit");
+                Console.WriteLine("X: Exit\n");
                 Console.Write("# ");
                 scelta = Console.ReadLine();
                 Console.WriteLine();

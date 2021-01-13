@@ -11,7 +11,6 @@ namespace FormulaOneWebForm {
         private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
         Tools dbTools;
 
-
         protected void Page_Load(object sender, EventArgs e) {
             dbTools = new Tools(CONNECTION_STRING);
             if (!Page.IsPostBack) {

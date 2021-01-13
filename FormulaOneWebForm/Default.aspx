@@ -24,10 +24,8 @@
             ID="content" 
             runat="server"
             CssClass="mydatagrid" 
-            PagerStyle-CssClass="pager"
             HeaderStyle-CssClass="header" 
             RowStyle-CssClass="rows">
-
         </asp:GridView>
         <span runat="server" class="no-results" id="noResults" ></span>
     </form>

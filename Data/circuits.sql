@@ -29,6 +29,7 @@ VALUES
         10,
         4318,
         '1970',
+        '1:17.103-Max Verstappen-2019',
         'C:\\data\\FormulaOne\\img\\circuits\\redbull-ring.png',
         'C:\\data\\FormulaOne\\img\\circuits\\redbull-ring(2).png'
     );
