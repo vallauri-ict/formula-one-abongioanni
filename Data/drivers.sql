@@ -41,7 +41,7 @@ INSERT INTO [Driver](
 )
 VALUES(
 		'C:\\data\\FormulaOne\\img\\antonio-helmet.png',
-		'C:\\data\\FormulaOne\\img\\antonio.png',
+		'C:\\data\\FormulaOne\\img\\antonio.jpg',
 		'Antonio Giovinazzi',
 		99,
 		1,
