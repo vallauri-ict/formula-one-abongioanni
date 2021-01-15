@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormulaOneWebForm", "Formul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormulaOneDll", "FormulaOneDll\FormulaOneDll.csproj", "{A8A6D143-0864-4050-B4B8-81A2B155560E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiPlaygroundWebServices", "ApiPlaygroundWebServices\ApiPlaygroundWebServices.csproj", "{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A8A6D143-0864-4050-B4B8-81A2B155560E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8A6D143-0864-4050-B4B8-81A2B155560E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8A6D143-0864-4050-B4B8-81A2B155560E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
