@@ -32,7 +32,7 @@ VALUES
 (
 		0,
 		'C:\\data\\FormulaOne\\img\\alfa-car.png',
-		'C:\\data\\FormulaOne\\img\\alfa-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\alfa-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\alfa-team-smalllogo.png',
 		'#960000',
 		'Alfa Romeo Racing ORLEN',
@@ -63,7 +63,7 @@ VALUES
 (
 		1,
 		'C:\\data\\FormulaOne\\img\\alphatauri-car.png',
-		'C:\\data\\FormulaOne\\img\\alphatauri-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\alphatauri-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\alphatauri-team-smalllogo.png',
 		'#FFFFFF',
 		'Scuderia AlphaTauri Honda',
@@ -94,7 +94,7 @@ VALUES
 (
 		2,
 		'C:\\data\\FormulaOne\\img\\ferrari-car.png',
-		'C:\\data\\FormulaOne\\img\\ferrari-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\ferrari-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\ferrari-team-smalllogo.png',
 		'#DC0000',
 		'Scuderia Ferrari Mission Winnow',
@@ -125,7 +125,7 @@ VALUES
 (
 		3,
 		'C:\\data\\FormulaOne\\img\\haas-car.png',
-		'C:\\data\\FormulaOne\\img\\haas-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\haas-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\haas-team-smalllogo.png',
 		'#787878',
 		'Haas F1 Team',
@@ -156,7 +156,7 @@ VALUES
 (
 		4,
 		'C:\\data\\FormulaOne\\img\\mac-car.png',
-		'C:\\data\\FormulaOne\\img\\mac-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\mac-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\mac-team-smalllogo.png',
 		'#FF8700',
 		'McLaren F1 Team',
@@ -187,7 +187,7 @@ VALUES
 (
 		5,
 		'C:\\data\\FormulaOne\\img\\mer-car.png',
-		'C:\\data\\FormulaOne\\img\\mer-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\mer-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\mer-team-smalllogo.png',
 		'#00D2BE',
 		'Mercedes-AMG Petronas F1 Team',
@@ -218,7 +218,7 @@ VALUES
 (
 		6,
 		'C:\\data\\FormulaOne\\img\\red-car.png',
-		'C:\\data\\FormulaOne\\img\\red-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\red-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\red-team-smalllogo.png',
 		'#0600EF',
 		'Aston Martin Red Bull Racing',
@@ -249,7 +249,7 @@ VALUES
 (
 		7,
 		'C:\\data\\FormulaOne\\img\\ren-car.png',
-		'C:\\data\\FormulaOne\\img\\ren-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\ren-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\ren-team-smalllogo.png',
 		'#FFF500',
 		'Renault DP World F1 Team',
@@ -280,7 +280,7 @@ VALUES
 (
 		8,
 		'C:\\data\\FormulaOne\\img\\rp-car.png',
-		'C:\\data\\FormulaOne\\img\\rp-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\rp-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\rp-team-smalllogo.png',
 		'#F596C8',
 		'BWT Racing Point F1 Team',
@@ -311,7 +311,7 @@ VALUES
 (
 		9,
 		'C:\\data\\FormulaOne\\img\\williams-car.png',
-		'C:\\data\\FormulaOne\\img\\williams-team-fulllogo.png',
+		'C:\\data\\FormulaOne\\img\\williams-team-fulllogo.jpg',
 		'C:\\data\\FormulaOne\\img\\williams-team-smalllogo.png',
 		'#0082FA',
 		'Williams Racing',

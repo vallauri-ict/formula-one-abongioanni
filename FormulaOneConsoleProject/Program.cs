@@ -51,7 +51,7 @@ namespace FormulaOneConsoleProject {
                 Console.WriteLine("D: Delete Constraints");
                 Console.WriteLine("B: Backup DB");
                 Console.WriteLine("G: Get Backup DB");
-                Console.WriteLine("X: Exit");
+                Console.WriteLine("X: Exit\n");
                 Console.Write("# ");
                 scelta = Console.ReadLine();
                 Console.WriteLine();
@@ -185,9 +185,9 @@ namespace FormulaOneConsoleProject {
                 Directory.CreateDirectory(newFolder);
             }
             if (Directory.GetFiles(oldFolder).Length != Directory.GetFiles(newFolder).Length) {
-                foreach (string newPath in Directory.GetFiles(newFolder, "*.*", SearchOption.AllDirectories)) {
+                foreach (string newPath in Directory.GetFiles(oldFolder, "*.*")) {
                     var filename = newPath.Split("\\").Last();
-                    File.Copy(Path.Combine(newFolder, filename), Path.Combine(oldFolder, filename), true);
+                    File.Copy(Path.Combine(oldFolder, filename), Path.Combine(newFolder, filename), true);
                 }
             }
         }

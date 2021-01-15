@@ -19,8 +19,8 @@ namespace FormulaOneWebForm {
                 cmb.DataSource = elem;
             }
             cmb.DataBind();
-            cmbCountries_SelectedIndexChanged(cmb, new EventArgs());
             content.DataBound += Content_DataBound;
+            cmbCountries_SelectedIndexChanged(cmb, new EventArgs());
         }
 
         private void Content_DataBound(object sender, EventArgs e) {
@@ -31,38 +31,12 @@ namespace FormulaOneWebForm {
                     row.Cells[row.Cells.Count - 1].BackColor = ColorTranslator.FromHtml(color);
                 }
             }
+            noResults.InnerText = cmb.SelectedValue + "'s table is empty!";
+            noResults.Visible = content.Rows.Count == 0;
         }
 
         protected void cmbCountries_SelectedIndexChanged(object sender, EventArgs e) {
-            switch (((DropDownList)sender).SelectedValue) {
-                case "Country": {
-                        content.DataSource = dbTools.GetCountryTable();
-                        break;
-                    }
-                case "Team": {
-                        content.DataSource = dbTools.GetTeamTable();
-                        break;
-                    }
-                case "Driver": {
-                        content.DataSource = dbTools.GetDriverTable();
-                        break;
-                    }
-                case "Circuit": {
-                        content.DataSource = dbTools.GetCircuitTable();
-                        break;
-                    }
-                case "Race": {
-                        content.DataSource = dbTools.GetRaceTable();
-                        break;
-                    }
-                case "Result": {
-                        content.DataSource = dbTools.GetResultTable();
-                        break;
-                    }
-                default:
-                    break;
-
-            }
+            content.DataSource = dbTools.GetTable(((DropDownList)sender).SelectedValue);
             content.DataBind();
         }
     }

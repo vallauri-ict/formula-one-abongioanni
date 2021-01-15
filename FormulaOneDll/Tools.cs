@@ -187,6 +187,17 @@ namespace FormulaOneDllProject {
             }
         }
 
+
+        public DataTable GetTable(string table) {
+            var result = GetRecords($"SELECT * FROM {table};");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
         public List<Result> GetResultList() {
             List<Result> resultList = new List<Result>();
             foreach (DataRow row in GetResultTable().Rows) {
@@ -204,6 +215,10 @@ namespace FormulaOneDllProject {
                 throw new Exception(result.Item2.ToString());
             }
         }
+
+        //public DataTable GetTable() {
+
+        //}
 
         public void Backup(string WORKINGPATH) {
             try {
