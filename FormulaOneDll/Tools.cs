@@ -115,6 +115,16 @@ namespace FormulaOneDllProject {
             }
         }
 
+        public Country GetCountry(string isoCode) {
+            var result = GetRecords($"SELECT * FROM Country WHERE iso2='{isoCode}';");
+            if (!result.Item1) {
+                return new Country(((DataTable)result.Item2).Rows[0]);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
         public List<Driver> GetDriverList() {
             List<Driver> driverList = new List<Driver>();
             foreach (DataRow row in GetDriverTable().Rows) {
@@ -127,6 +137,24 @@ namespace FormulaOneDllProject {
             var result = GetRecords("SELECT * FROM Driver;");
             if (!result.Item1) {
                 return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public Driver GetDriver(int number) {
+            var result = GetRecords($"SELECT * FROM Driver WHERE number={number};");
+            if (!result.Item1) {
+                var driver = new Driver(((DataTable)result.Item2).Rows[0]);
+                var countryResult = GetRecords($"SELECT * FROM Country WHERE iso2={driver.CountryCode};");
+                if (!countryResult.Item1) {
+                    driver.DriverCountry = new Country(((DataTable)countryResult.Item2).Rows[0]);
+                }
+                else {
+                    throw new Exception(countryResult.Item2.ToString());
+                }
+                return driver;
             }
             else {
                 throw new Exception(result.Item2.ToString());
@@ -151,6 +179,24 @@ namespace FormulaOneDllProject {
             }
         }
 
+        public Team GetTeam(int id) {
+            var result = GetRecords($"SELECT * FROM Team WHERE id={id};");
+            if (!result.Item1) {
+                var team = new Team(((DataTable)result.Item2).Rows[0]);
+                var driverResult = GetRecords($"SELECT * FROM Driver WHERE team_id={id};");
+                if (!driverResult.Item1) {
+                    team.SetDrivers(new Driver(((DataTable)driverResult.Item2).Rows[0]), new Driver(((DataTable)driverResult.Item2).Rows[1]));
+                }
+                else {
+                    throw new Exception(driverResult.Item2.ToString());
+                }
+                return team;
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
         public List<Circuit> GetCircuitList() {
             List<Circuit> circuitList = new List<Circuit>();
             foreach (DataRow row in GetCircuitTable().Rows) {
@@ -163,6 +209,24 @@ namespace FormulaOneDllProject {
             var result = GetRecords("SELECT * FROM Circuit;");
             if (!result.Item1) {
                 return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public Circuit GetCircuit(string id) {
+            var result = GetRecords($"SELECT * FROM Circuit WHERE id={id};");
+            if (!result.Item1) {
+                var circuit = new Circuit(((DataTable)result.Item2).Rows[0]);
+                var countryResult = GetRecords($"SELECT * FROM Country WHERE iso2={circuit.CountryIso2};");
+                if (!countryResult.Item1) {
+                    circuit.Country = new Country(((DataTable)countryResult.Item2).Rows[0]);
+                }
+                else {
+                    throw new Exception(countryResult.Item2.ToString());
+                }
+                return circuit;
             }
             else {
                 throw new Exception(result.Item2.ToString());
@@ -187,6 +251,24 @@ namespace FormulaOneDllProject {
             }
         }
 
+        public Race GetRace(int id) {
+            var result = GetRecords($"SELECT * FROM Race WHERE id={id};");
+            if (!result.Item1) {
+                var race = new Race(((DataTable)result.Item2).Rows[0]);
+                var circuitResult = GetRecords($"SELECT * FROM Circuit WHERE id={race.CircuitId};");
+
+                if (!circuitResult.Item1) {
+                    race.Circuit = new Circuit(((DataTable)circuitResult.Item2).Rows[0]);
+                }
+                else {
+                    throw new Exception(circuitResult.Item2.ToString());
+                }
+                return race;
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
 
         public DataTable GetTable(string table) {
             var result = GetRecords($"SELECT * FROM {table};");
@@ -216,9 +298,15 @@ namespace FormulaOneDllProject {
             }
         }
 
-        //public DataTable GetTable() {
-
-        //}
+        public Result GetResult(int id) {
+            var result = GetRecords($"SELECT * FROM Result WHERE id={id};");
+            if (!result.Item1) {
+                return new Result(((DataTable)result.Item2).Rows[0]);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
 
         public void Backup(string WORKINGPATH) {
             try {

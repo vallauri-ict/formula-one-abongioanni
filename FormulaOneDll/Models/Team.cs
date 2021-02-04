@@ -4,9 +4,9 @@ using System.Data;
 namespace FormulaOneDllProject {
     public class Team {
         private int _id;
-        private string _smallLogo;
-        private string _fullLogo;
-        private string _carImage;
+        private Byte[] _smallLogo;
+        private Byte[] _fullLogo;
+        private Byte[] _carImage;
         private string _color;
         private string _smallName;
         private string _fullName;
@@ -18,7 +18,7 @@ namespace FormulaOneDllProject {
         private Country _baseCountry;
         private (Driver, Driver) _drivers;
 
-        public Team(int id, string smallLogo, string fullLogo, string carImage, string color, string smallName, string fullName, string @base, string teamChief, string puConstructor, string countryIso2, int worldChampionships) {
+        public Team(int id, Byte[] smallLogo, Byte[] fullLogo, Byte[] carImage, string color, string smallName, string fullName, string @base, string teamChief, string puConstructor, string countryIso2, int worldChampionships) {
             _id = id;
             _smallLogo = smallLogo;
             _fullLogo = fullLogo;
@@ -35,9 +35,9 @@ namespace FormulaOneDllProject {
 
         public Team(DataRow r) {
             _id = Convert.ToInt32(r["id"]);
-            _smallLogo = r["small_image"].ToString().Trim();
-            _fullLogo = r["full_image"].ToString().Trim();
-            _carImage = r["car_image"].ToString().Trim();
+            _smallLogo = (Byte[])r["small_image"];
+            _fullLogo = (Byte[])r["full_image"];
+            _carImage = (Byte[])r["car_image"];
             _color = r["color"].ToString().Trim();
             _smallName = r["small_name"].ToString().Trim();
             _fullName = r["full_name"].ToString().Trim();
@@ -54,9 +54,9 @@ namespace FormulaOneDllProject {
         }
 
         public int Id { get => _id; set => _id = value; }
-        public string SmallLogo { get => _smallLogo; set => _smallLogo = value; }
-        public string FullLogo { get => _fullLogo; set => _fullLogo = value; }
-        public string CarImage { get => _carImage; set => _carImage = value; }
+        public Byte[] SmallLogo { get => _smallLogo; set => _smallLogo = value; }
+        public Byte[] FullLogo { get => _fullLogo; set => _fullLogo = value; }
+        public Byte[] CarImage { get => _carImage; set => _carImage = value; }
         public string Color { get => _color; set => _color = value; }
         public string SmallName { get => _smallName; set => _smallName = value; }
         public string FullName { get => _fullName; set => _fullName = value; }

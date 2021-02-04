@@ -43,21 +43,6 @@ namespace FormulaOneDllProject {
             _teamId = r.Field<int>("team_id");
         }
 
-        public static IEnumerable<Driver> GetDrivers() {
-            List<Driver> drivers = new List<Driver>();
-            using (SqlConnection connection = new SqlConnection(Paths.CONNECTION_STRING)) {
-                using (SqlCommand cmd = new SqlCommand("SELECT * FROM Driver;", connection)) {
-                    var t = new DataTable();
-                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
-                    sda.Fill(t);
-                    foreach (DataRow r in t.Rows) {
-                        drivers.Add(new Driver(r));
-                    }
-                    return drivers;
-                }
-            }
-        }
-
         public Byte[] HelmetImage { get => _helmetImage; set => _helmetImage = value; }
         public Byte[] FullImage { get => _fullImage; set => _fullImage = value; }
         public string FullName { get => _fullName; set => _fullName = value; }

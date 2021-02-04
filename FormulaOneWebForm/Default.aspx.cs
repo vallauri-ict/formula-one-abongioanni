@@ -7,12 +7,10 @@ using FormulaOneDllProject;
 
 namespace FormulaOneWebForm {
     public partial class Default : System.Web.UI.Page {
-        public const string WORKINGPATH = @"C:\data\FormulaOne\";
-        private const string CONNECTION_STRING = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + WORKINGPATH + "FormulaOne.mdf;Integrated Security=True;Connect Timeout=30";
         Tools dbTools;
 
         protected void Page_Load(object sender, EventArgs e) {
-            dbTools = new Tools(CONNECTION_STRING);
+            dbTools = new Tools(Paths.CONNECTION_STRING);
             if (!Page.IsPostBack) {
                 string[] elem = dbTools.ShowTables();
                 Array.Sort(elem);
@@ -20,7 +18,7 @@ namespace FormulaOneWebForm {
             }
             cmb.DataBind();
             content.DataBound += Content_DataBound;
-            cmbCountries_SelectedIndexChanged(cmb, new EventArgs());
+            CmbCountries_SelectedIndexChanged(cmb, new EventArgs());
         }
 
         private void Content_DataBound(object sender, EventArgs e) {
@@ -35,7 +33,7 @@ namespace FormulaOneWebForm {
             noResults.Visible = content.Rows.Count == 0;
         }
 
-        protected void cmbCountries_SelectedIndexChanged(object sender, EventArgs e) {
+        protected void CmbCountries_SelectedIndexChanged(object sender, EventArgs e) {
             content.DataSource = dbTools.GetTable(((DropDownList)sender).SelectedValue);
             content.DataBind();
         }
