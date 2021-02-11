@@ -34,23 +34,33 @@ namespace FormulaOneDllProject {
         }
 
         public Team(DataRow r) {
-            _id = Convert.ToInt32(r["id"]);
-            _smallLogo = (Byte[])r["small_image"];
-            _fullLogo = (Byte[])r["full_image"];
-            _carImage = (Byte[])r["car_image"];
             _color = r["color"].ToString().Trim();
             _smallName = r["small_name"].ToString().Trim();
-            _fullName = r["full_name"].ToString().Trim();
-            _base = r["base"].ToString().Trim();
-            _teamChief = r["chief"].ToString().Trim();
-            _puConstructor = r["pu_constructor"].ToString().Trim();
-            _countryIso2 = r["country"].ToString().Trim();
-            _worldChampionships = Convert.ToInt32(r["championships_number"]);
+            if (r.ItemArray.Length > 2) {
+                _id = Convert.ToInt32(r["id"]);
+                _smallLogo = (Byte[])r["small_image"];
+                _carImage = (Byte[])r["car_image"];
+
+                if (r.ItemArray.Length > 5) {
+                    _fullLogo = (Byte[])r["full_image"];
+                    _fullName = r["full_name"].ToString().Trim();
+                    _base = r["base"].ToString().Trim();
+                    _teamChief = r["chief"].ToString().Trim();
+                    _puConstructor = r["pu_constructor"].ToString().Trim();
+                    _countryIso2 = r["country"].ToString().Trim();
+                    _worldChampionships = Convert.ToInt32(r["championships_number"]);
+                }
+            }
         }
 
         public void SetDrivers(Driver d1, Driver d2) {
             _drivers.Item1 = d1;
             _drivers.Item2 = d2;
+        }
+
+        public void SetDrivers((Driver, Driver) drivers) {
+            _drivers.Item1 = drivers.Item1;
+            _drivers.Item2 = drivers.Item2;
         }
 
         public int Id { get => _id; set => _id = value; }

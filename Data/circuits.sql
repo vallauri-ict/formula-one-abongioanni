@@ -10,17 +10,7 @@ CREATE TABLE [Circuit] (
     [small_image] image
 );
 
-INSERT INTO
-    [Circuit](
-        [id],
-        [name],
-        [country],
-        [length],
-        [first_race_year],
-        [fastest_lap],
-        [small_image],
-        [full_image]
-    )
+INSERT INTO [Circuit]
 VALUES
     (
         'RBR00',
@@ -30,8 +20,8 @@ VALUES
         4318,
         '1970',
         '1:17.103-Max Verstappen-2019',
+        'C:\\data\\FormulaOne\\img\\circuits\\redbull-ring(2).png',
         'C:\\data\\FormulaOne\\img\\circuits\\redbull-ring.png',
-        'C:\\data\\FormulaOne\\img\\circuits\\redbull-ring(2).png'
     );
 
 INSERT INTO

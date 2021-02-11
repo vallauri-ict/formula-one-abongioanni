@@ -14,31 +14,19 @@ namespace FromulaOneWebServices.Controller {
 
         Tools dbTools = new Tools(Paths.CONNECTION_STRING);
 
-        // GET: api/<RaceController>
-        [HttpGet]
+        [HttpGet("")]
+        [HttpGet("list")]
         public IEnumerable<Race> Get() {
-            return dbTools.GetRaceList();
+            var list = dbTools.GetRaceList(false);
+            foreach (var race in list) {
+                race.Circuit.CountryCode = $"https://www.countryflags.io/{race.Circuit.CountryCode}/flat/64.png";
+            }
+            return list;
         }
 
-        // GET api/<RaceController>/5
         [HttpGet("{id}")]
         public Race Get(int id) {
             return dbTools.GetRace(id);
-        }
-
-        // POST api/<RaceController>
-        [HttpPost]
-        public void Post([FromBody] string value) {
-        }
-
-        // PUT api/<RaceController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
-        }
-
-        // DELETE api/<RaceController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) {
         }
     }
 }

@@ -32,3 +32,5 @@ IF EXISTS(
     FROM
         [Race]
 ) DROP TABLE [Race];
+
+DROP TABLE [Result];

@@ -14,31 +14,21 @@ namespace FromulaOneWebServices {
 
         Tools dbTools = new Tools(Paths.CONNECTION_STRING);
 
-        // GET: api/<DriverController>
-        [HttpGet]
+        [HttpGet("")]
+        [HttpGet("list")]
         public IEnumerable<Driver> Get() {
-            return dbTools.GetDriverList();
+            var list = dbTools.GetDriverList(false);
+            foreach (var driver in list) {
+                driver.CountryCode = $"https://www.countryflags.io/{driver.CountryCode}/flat/64.png";
+            }
+            return list;
         }
 
-        // GET api/<DriverController>/5
         [HttpGet("{number}")]
         public Driver Get(int number) {
-            return dbTools.GetDriver(number);
-        }
-
-        // POST api/<DriverController>
-        [HttpPost]
-        public void Post([FromBody] string value) {
-        }
-
-        // PUT api/<DriverController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
-        }
-
-        // DELETE api/<DriverController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) {
+            var driver = dbTools.GetDriver(number);
+            driver.CountryCode = $"https://www.countryflags.io/{driver.CountryCode}/flat/64.png";
+            return driver;
         }
     }
 }

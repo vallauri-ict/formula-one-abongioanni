@@ -1,0 +1,8 @@
+Elenco team
+- api/team/?list -> lista di tutte le squadre (NomeCorto,LogoCorto,NomiPiloti,ImmagineAuto,colore)
+- api/team/id -> Tutte le caratteristiche del team, Caratteristiche piloti (nome,numero,immagini)
+- api/driver/?list -> lista di tutti i piloti (img,nome,numero,coloreteam)
+- api/race/?list -> lista di tutte le gare (Se si è già svolta anche il podio) (CircuitImageSmall, Luogo, Nome, Data, Flag)
+- api/result/?list -> 
+
+driver -> elenco driver, quando si clicca far vedere tutti i risultati delle gare con i punti

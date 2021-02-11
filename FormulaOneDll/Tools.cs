@@ -115,8 +115,8 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public Country GetCountry(string isoCode) {
-            var result = GetRecords($"SELECT * FROM Country WHERE iso2='{isoCode}';");
+        public Country GetCountry(string field, string value) {
+            var result = GetRecords($"SELECT * FROM Country WHERE {field}='{value}';");
             if (!result.Item1) {
                 return new Country(((DataTable)result.Item2).Rows[0]);
             }
@@ -125,12 +125,32 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public List<Driver> GetDriverList() {
+        /* DRIVER **************************************************************************/
+
+        public List<Driver> GetDriverList(bool full = true) {
             List<Driver> driverList = new List<Driver>();
-            foreach (DataRow row in GetDriverTable().Rows) {
-                driverList.Add(new Driver(row));
+            var result = GetRecords($"SELECT {(full ? "*" : "number, full_name, full_image, country")} FROM Driver;");
+            if (!result.Item1) {
+                foreach (DataRow row in GetDriverTable().Rows) {
+                    var driver = new Driver(row);
+                    driver.Team = GetDriverTeam(driver.TeamId);
+                    driverList.Add(driver);
+                }
+                return driverList;
             }
-            return driverList;
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public Team GetDriverTeam(int teamId) {
+            var result = GetRecords($"SELECT small_name,color FROM Team WHERE id={teamId};");
+            if (!result.Item1) {
+                return new Team(((DataTable)result.Item2).Rows[0]);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
         }
 
         public DataTable GetDriverTable() {
@@ -147,13 +167,7 @@ namespace FormulaOneDllProject {
             var result = GetRecords($"SELECT * FROM Driver WHERE number={number};");
             if (!result.Item1) {
                 var driver = new Driver(((DataTable)result.Item2).Rows[0]);
-                var countryResult = GetRecords($"SELECT * FROM Country WHERE iso2={driver.CountryCode};");
-                if (!countryResult.Item1) {
-                    driver.DriverCountry = new Country(((DataTable)countryResult.Item2).Rows[0]);
-                }
-                else {
-                    throw new Exception(countryResult.Item2.ToString());
-                }
+                driver.Team = GetDriverTeam(driver.TeamId);
                 return driver;
             }
             else {
@@ -161,12 +175,22 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public List<Team> GetTeamList() {
+        /* TEAM **************************************************************************/
+
+        public List<Team> GetTeamList(bool full = true) {
             List<Team> teamList = new List<Team>();
-            foreach (DataRow row in GetTeamTable().Rows) {
-                teamList.Add(new Team(row));
+            var result = GetRecords($"SELECT {(full ? "*" : "id, small_name, small_image, car_image, color")} FROM Team;");
+            if (!result.Item1) {
+                foreach (DataRow row in ((DataTable)result.Item2).Rows) {
+                    var team = new Team(row);
+                    team.SetDrivers(GetTeamDrivers(team.Id));
+                    teamList.Add(team);
+                }
+                return teamList;
             }
-            return teamList;
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
         }
 
         public DataTable GetTeamTable() {
@@ -183,13 +207,7 @@ namespace FormulaOneDllProject {
             var result = GetRecords($"SELECT * FROM Team WHERE id={id};");
             if (!result.Item1) {
                 var team = new Team(((DataTable)result.Item2).Rows[0]);
-                var driverResult = GetRecords($"SELECT * FROM Driver WHERE team_id={id};");
-                if (!driverResult.Item1) {
-                    team.SetDrivers(new Driver(((DataTable)driverResult.Item2).Rows[0]), new Driver(((DataTable)driverResult.Item2).Rows[1]));
-                }
-                else {
-                    throw new Exception(driverResult.Item2.ToString());
-                }
+                team.SetDrivers(GetTeamDrivers(id));
                 return team;
             }
             else {
@@ -197,48 +215,43 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public List<Circuit> GetCircuitList() {
-            List<Circuit> circuitList = new List<Circuit>();
-            foreach (DataRow row in GetCircuitTable().Rows) {
-                circuitList.Add(new Circuit(row));
-            }
-            return circuitList;
-        }
-
-        public DataTable GetCircuitTable() {
-            var result = GetRecords("SELECT * FROM Circuit;");
+        public (Driver, Driver) GetTeamDrivers(int id) {
+            var result = GetRecords($"SELECT number,full_name,full_image,team_id FROM Driver WHERE team_id={id};");
             if (!result.Item1) {
-                return ((DataTable)result.Item2);
+                var drivers = ((DataTable)result.Item2).Rows;
+                return (new Driver(drivers[0]), new Driver(drivers[1]));
             }
             else {
                 throw new Exception(result.Item2.ToString());
             }
         }
 
-        public Circuit GetCircuit(string id) {
-            var result = GetRecords($"SELECT * FROM Circuit WHERE id={id};");
-            if (!result.Item1) {
-                var circuit = new Circuit(((DataTable)result.Item2).Rows[0]);
-                var countryResult = GetRecords($"SELECT * FROM Country WHERE iso2={circuit.CountryIso2};");
-                if (!countryResult.Item1) {
-                    circuit.Country = new Country(((DataTable)countryResult.Item2).Rows[0]);
-                }
-                else {
-                    throw new Exception(countryResult.Item2.ToString());
-                }
-                return circuit;
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
+        /* RACE **************************************************************************/
 
-        public List<Race> GetRaceList() {
+        public List<Race> GetRaceList(bool full = true) {
             List<Race> raceList = new List<Race>();
-            foreach (DataRow row in GetRaceTable().Rows) {
-                raceList.Add(new Race(row));
+            var result = GetRecords($"SELECT {(full ? "*" : "id, name, date_start, circuit_id")} FROM Race;");
+            if (!result.Item1) {
+                foreach (DataRow row in ((DataTable)result.Item2).Rows) {
+                    var race = new Race(row);
+                    race.Circuit = GetRaceCircuit(race.CircuitId);
+                    raceList.Add(race);
+                }
+                return raceList;
             }
-            return raceList;
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public Circuit GetRaceCircuit(string id) {
+            var result = GetRecords($"SELECT small_image,country FROM Circuit WHERE id='{id}';");
+            if (!result.Item1) {
+                return new Circuit(((DataTable)result.Item2).Rows[0]);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
         }
 
         public DataTable GetRaceTable() {
@@ -264,6 +277,44 @@ namespace FormulaOneDllProject {
                     throw new Exception(circuitResult.Item2.ToString());
                 }
                 return race;
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        /* CIRCUIT **************************************************************************/
+
+        public List<Circuit> GetCircuitList() {
+            List<Circuit> circuitList = new List<Circuit>();
+            foreach (DataRow row in GetCircuitTable().Rows) {
+                circuitList.Add(new Circuit(row));
+            }
+            return circuitList;
+        }
+
+        public DataTable GetCircuitTable() {
+            var result = GetRecords("SELECT * FROM Circuit;");
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public Circuit GetCircuit(string id) {
+            var result = GetRecords($"SELECT * FROM Circuit WHERE id={id};");
+            if (!result.Item1) {
+                var circuit = new Circuit(((DataTable)result.Item2).Rows[0]);
+                var countryResult = GetRecords($"SELECT * FROM Country WHERE iso2={circuit.CountryCode};");
+                if (!countryResult.Item1) {
+                    circuit.Country = new Country(((DataTable)countryResult.Item2).Rows[0]);
+                }
+                else {
+                    throw new Exception(countryResult.Item2.ToString());
+                }
+                return circuit;
             }
             else {
                 throw new Exception(result.Item2.ToString());

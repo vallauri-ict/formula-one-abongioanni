@@ -14,31 +14,15 @@ namespace FromulaOneWebServices {
 
         Tools dbTools = new Tools(Paths.CONNECTION_STRING);
 
-        // GET: api/<TeamController>
-        [HttpGet]
+        [HttpGet("")]
+        [HttpGet("list")]
         public IEnumerable<Team> Get() {
-            return dbTools.GetTeamList();
+            return dbTools.GetTeamList(false);
         }
 
-        // GET api/<TeamController>/5
         [HttpGet("{id}")]
         public Team Get(int id) {
             return dbTools.GetTeam(id);
-        }
-
-        // POST api/<TeamController>
-        [HttpPost]
-        public void Post([FromBody] string value) {
-        }
-
-        // PUT api/<TeamController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
-        }
-
-        // DELETE api/<TeamController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) {
         }
     }
 }

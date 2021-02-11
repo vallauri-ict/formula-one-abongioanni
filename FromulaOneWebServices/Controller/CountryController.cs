@@ -14,31 +14,20 @@ namespace FromulaOneWebServices {
 
         Tools dbTools = new Tools(Paths.CONNECTION_STRING);
 
-        // GET: api/<CountryController>
-        [HttpGet]
+        [HttpGet("")]
+        [HttpGet("list")]
         public IEnumerable<Country> Get() {
             return dbTools.GetCountryList();
         }
 
-        // GET api/<CountryController>/IT
         [HttpGet("{id}")]
         public Country Get(string id) {
-            return dbTools.GetCountry(id);
+            return dbTools.GetCountry("iso2", id);
         }
 
-        // POST api/<CountryController>
-        [HttpPost]
-        public void Post([FromBody] string value) {
-        }
-
-        // PUT api/<CountryController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
-        }
-
-        // DELETE api/<CountryController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) {
+        [HttpGet("{field}/{value}")]
+        public Country Get(string field, string value) {
+            return dbTools.GetCountry(field, value);
         }
     }
 }

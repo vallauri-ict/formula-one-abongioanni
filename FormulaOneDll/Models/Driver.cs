@@ -21,6 +21,7 @@ namespace FormulaOneDllProject {
         private DateTime _dob;
         private Country _driverCountry;
         private int _teamId;
+        private Team _team;
 
         public Driver(Byte[] helmetImage, Byte[] fullImage, string fullName, int number, string countryIso2, int podiums, DateTime dob, int teamId) {
             _helmetImage = helmetImage;
@@ -34,14 +35,18 @@ namespace FormulaOneDllProject {
         }
 
         public Driver(DataRow r) {
-            _helmetImage = (Byte[])r["helmet_image"];
             _fullImage = (Byte[])r["full_image"];
             _fullName = r.Field<string>("full_name").Trim();
             _number = r.Field<int>("number");
-            _podiums = r.Field<int>("podiums_number");
-            _countryIso2 = r.Field<string>("country").Trim();
             _teamId = r.Field<int>("team_id");
+            if (r.ItemArray.Length > 4) {
+                _helmetImage = (Byte[])r["helmet_image"];
+                _podiums = r.Field<int>("podiums_number");
+                _countryIso2 = r.Field<string>("country").Trim();
+            }
         }
+
+        public Driver() { }
 
         public Byte[] HelmetImage { get => _helmetImage; set => _helmetImage = value; }
         public Byte[] FullImage { get => _fullImage; set => _fullImage = value; }
@@ -52,5 +57,6 @@ namespace FormulaOneDllProject {
         public string CountryCode { get => _countryIso2; set => _countryIso2 = value; }
         public Country DriverCountry { get => _driverCountry; set => _driverCountry = value; }
         public int TeamId { get => _teamId; set => _teamId = value; }
+        public Team Team { get => _team; set => _team = value; }
     }
 }

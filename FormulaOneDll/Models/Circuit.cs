@@ -5,7 +5,7 @@ namespace FormulaOneDllProject {
     public class Circuit {
         private string _id;
         private string _name;
-        private string _countryIso2;
+        private string _countryCode;
         private int _lapNumber;
         private int _turnNumber;
         private int _length;
@@ -20,7 +20,7 @@ namespace FormulaOneDllProject {
         public Circuit(DataRow r) {
             Id = r["id"].ToString().Trim();
             Name = r["name"].ToString().Trim();
-            CountryIso2 = r["country"].ToString().Trim();
+            CountryCode = r["country"].ToString().Trim();
             LapNumber = Convert.ToInt32(r["laps_number"]);
             TurnNumber = Convert.ToInt32(r["turns_number"]);
             Length = Convert.ToInt32(r["length"]);
@@ -33,7 +33,7 @@ namespace FormulaOneDllProject {
         public Circuit(string id, string name, string countryIso2, int lapNumber, int turnNumber, int length, string firstRaceYear, string fastestLap, string smallImage, string fullImage) {
             Id = id;
             Name = name;
-            CountryIso2 = countryIso2;
+            CountryCode = countryIso2;
             LapNumber = lapNumber;
             TurnNumber = turnNumber;
             Length = length;
@@ -45,7 +45,7 @@ namespace FormulaOneDllProject {
 
         public string Id { get => _id; set => _id = value; }
         public string Name { get => _name; set => _name = value; }
-        public string CountryIso2 { get => _countryIso2; set => _countryIso2 = value; }
+        public string CountryCode { get => _countryCode; set => _countryCode = value; }
         public int LapNumber { get => _lapNumber; set => _lapNumber = value; }
         public int TurnNumber { get => _turnNumber; set => _turnNumber = value; }
         public int Length { get => _length; set => _length = value; }
