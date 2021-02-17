@@ -247,7 +247,12 @@ namespace FormulaOneDllProject {
         public Circuit GetRaceCircuit(string id) {
             var result = GetRecords($"SELECT small_image,country FROM Circuit WHERE id='{id}';");
             if (!result.Item1) {
-                return new Circuit(((DataTable)result.Item2).Rows[0]);
+                try {
+                    return new Circuit(((DataTable)result.Item2).Rows[0]);
+                }
+                catch {
+                    return new Circuit();
+                }
             }
             else {
                 throw new Exception(result.Item2.ToString());

@@ -15,7 +15,7 @@ namespace FormulaOneDllProject {
         private string _fullImage;
         private Country _country;
 
-
+        public Circuit() { }
 
         public Circuit(DataRow r) {
             Id = r["id"].ToString().Trim();
