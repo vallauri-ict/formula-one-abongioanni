@@ -1,4 +1,4 @@
-﻿using FormulaOneDllProject;
+﻿using FormulaOneDll;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,17 +18,24 @@ namespace FromulaOneWebServices.Controller {
 
         [HttpGet("")]
         [HttpGet("list")]
-        public IEnumerable<Race> Get() {
-            var list = dbTools.GetRaceList(false);
-            foreach (var race in list) {
-                race.Circuit.CountryCode = $"https://www.countryflags.io/{race.Circuit.CountryCode}/flat/64.png";
+        public IEnumerable<RaceCardDto> Get() {
+            List<RaceCardDto> raceList = new List<RaceCardDto>();
+            foreach (Race race in dbTools.GetRaceList()) {
+
+                var circuit = dbTools.GetCircuitList($"SELECT small_image,country FROM Circuit WHERE id='{race.CircuitId}';")[0];
+                var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{circuit.CountryCode}';")[0];
+                raceList.Add(new RaceCardDto(race, circuit, country));
             }
-            return list;
+            return raceList;
         }
 
         [HttpGet("{id}")]
-        public Race Get(int id) {
-            return dbTools.GetRace(id);
+        public RaceCardDto Get(int id) {
+            Race race = dbTools.GetRaceList($"SELECT * FROM Race WHERE id={id};")[0];
+            var circuit = dbTools.GetCircuitList($"SELECT small_image,country FROM Circuit WHERE id='{race.CircuitId}';")[0];
+            var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{circuit.CountryCode}';")[0];
+
+            return new RaceCardDto(race, circuit, country);
         }
     }
 }

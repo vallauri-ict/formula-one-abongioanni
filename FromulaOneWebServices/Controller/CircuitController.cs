@@ -1,4 +1,4 @@
-﻿using FormulaOneDllProject;
+﻿using FormulaOneDll;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,13 +16,22 @@ namespace FromulaOneWebServices.Controller {
 
         [HttpGet("")]
         [HttpGet("list")]
-        public IEnumerable<Circuit> Get() {
-            return dbTools.GetCircuitList();
+        [HttpGet("card")]
+        public IEnumerable<CircuitDto> Get() {
+            List<CircuitDto> circuitList = new List<CircuitDto>();
+            foreach (Circuit circuit in dbTools.GetCircuitList()) {
+                var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{circuit.CountryCode}';")[0];
+                circuitList.Add(new CircuitDto(circuit, country));
+            }
+            return circuitList;
         }
 
         [HttpGet("{id}")]
-        public Circuit Get(string id) {
-            return dbTools.GetCircuit(id);
+        public CircuitDto Get(string id) {
+            Circuit circuit = dbTools.GetCircuitList($"SELECT * FROM Circuit WHERE id='{id}';")[0];
+            var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{circuit.CountryCode}';")[0];
+
+            return new CircuitDto(circuit, country);
         }
 
         // [HttpGet("{field}/{value}")]

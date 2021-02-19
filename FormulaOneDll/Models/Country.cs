@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace FormulaOneDllProject {
+namespace FormulaOneDll {
     public class Country {
         private string _isoCode;
         private string _name;
@@ -11,8 +11,10 @@ namespace FormulaOneDllProject {
         }
 
         public Country(DataRow r) {
-            _isoCode = r["iso2"].ToString().Trim();
             _name = r["name"].ToString().Trim();
+            if (r.ItemArray.Length > 1) {
+                _isoCode = r["iso2"].ToString().Trim();
+            }
         }
 
         public Country() {

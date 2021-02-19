@@ -1,4 +1,4 @@
-﻿using FormulaOneDllProject;
+﻿using FormulaOneDll;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,19 +16,23 @@ namespace FromulaOneWebServices {
 
         [HttpGet("")]
         [HttpGet("list")]
-        public IEnumerable<Driver> Get() {
-            var list = dbTools.GetDriverList(false);
-            foreach (var driver in list) {
-                driver.CountryCode = $"https://www.countryflags.io/{driver.CountryCode}/flat/64.png";
+        [HttpGet("cards")]
+        public IEnumerable<DriverCardDto> Get() {
+            List<DriverCardDto> driverList = new List<DriverCardDto>();
+            foreach (Driver driver in dbTools.GetDriverList($"SELECT number, full_name, full_image, country,team_id FROM Driver;")) {
+                driverList.Add(new DriverCardDto(driver, dbTools.GetTeamList($"SELECT id,small_name,color FROM Team WHERE id={driver.TeamId};")[0]));
             }
-            return list;
+            return driverList;
         }
 
         [HttpGet("{number}")]
-        public Driver Get(int number) {
-            var driver = dbTools.GetDriver(number);
-            driver.CountryCode = $"https://www.countryflags.io/{driver.CountryCode}/flat/64.png";
-            return driver;
+        [HttpGet("{id}")]
+        public DriverDto Get(int number) {
+            var driver = dbTools.GetDriverList($"SELECT * FROM Driver WHERE number={number};")[0];
+            var team = dbTools.GetTeamList($"SELECT id,small_name,color FROM Team WHERE id={driver.TeamId};")[0];
+            var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{driver.CountryCode}';")[0];
+
+            return new DriverDto(driver, team, country);
         }
     }
 }

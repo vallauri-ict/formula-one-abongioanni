@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 
-namespace FormulaOneDllProject {
+namespace FormulaOneDll {
     public class Paths {
         public const string WORKINGPATH = @"C:\data\FormulaOne\";
         public const string DATAPATH = @"..\..\..\..\Data";
@@ -38,11 +38,15 @@ namespace FormulaOneDllProject {
             _fullImage = (Byte[])r["full_image"];
             _fullName = r.Field<string>("full_name").Trim();
             _number = r.Field<int>("number");
-            _teamId = r.Field<int>("team_id");
-            if (r.ItemArray.Length > 4) {
-                _helmetImage = (Byte[])r["helmet_image"];
-                _podiums = r.Field<int>("podiums_number");
+            if (r.ItemArray.Length > 3) {
+
+                _teamId = r.Field<int>("team_id");
                 _countryIso2 = r.Field<string>("country").Trim();
+
+                if (r.ItemArray.Length > 5) {
+                    _helmetImage = (Byte[])r["helmet_image"];
+                    _podiums = r.Field<int>("podiums_number");
+                }
             }
         }
 

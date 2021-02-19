@@ -1,4 +1,4 @@
-﻿using FormulaOneDllProject;
+﻿using FormulaOneDll;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,16 +18,6 @@ namespace FromulaOneWebServices {
         [HttpGet("list")]
         public IEnumerable<Country> Get() {
             return dbTools.GetCountryList();
-        }
-
-        [HttpGet("{id}")]
-        public Country Get(string id) {
-            return dbTools.GetCountry("iso2", id);
-        }
-
-        [HttpGet("{field}/{value}")]
-        public Country Get(string field, string value) {
-            return dbTools.GetCountry(field, value);
         }
     }
 }

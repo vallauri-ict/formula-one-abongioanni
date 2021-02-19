@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 
-namespace FormulaOneDllProject {
+namespace FormulaOneDll {
     public class Tools {
 
         private string connection_string;
@@ -80,6 +80,45 @@ namespace FormulaOneDllProject {
             return (err, result);
         }
 
+        private (bool, object) GetRecords(SqlCommand query) {
+            bool err = false;
+            object result = new DataTable();
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
+                connection.Open();
+                query.Connection = connection;
+                try {
+                    SqlDataAdapter sqlData = new SqlDataAdapter(query);
+                    sqlData.Fill((DataTable)result);
+                }
+                catch (SqlException se) {
+                    err = true;
+                    result = se.Message;
+                }
+            }
+
+            return (err, result);
+        }
+
+        public DataTable GetTable(string query) {
+            var result = GetRecords(query);
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
+        public DataTable GetTable(SqlCommand query) {
+            var result = GetRecords(query);
+            if (!result.Item1) {
+                return ((DataTable)result.Item2);
+            }
+            else {
+                throw new Exception(result.Item2.ToString());
+            }
+        }
+
         public string[] ShowTables() {
             using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
                 connection.Open();
@@ -97,271 +136,62 @@ namespace FormulaOneDllProject {
             }
         }
 
-        public List<Country> GetCountryList() {
+        public List<Country> GetCountryList(string query = "SELECT * FROM Country") {
             List<Country> countryList = new List<Country>();
-            foreach (DataRow row in GetCountryTable().Rows) {
+            foreach (DataRow row in GetTable(query).Rows) {
                 countryList.Add(new Country(row));
             }
             return countryList;
         }
 
-        public DataTable GetCountryTable() {
-            var result = GetRecords("SELECT * FROM Country;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public Country GetCountry(string field, string value) {
-            var result = GetRecords($"SELECT * FROM Country WHERE {field}='{value}';");
-            if (!result.Item1) {
-                return new Country(((DataTable)result.Item2).Rows[0]);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
         /* DRIVER **************************************************************************/
 
-        public List<Driver> GetDriverList(bool full = true) {
+        public List<Driver> GetDriverList(string query = "SELECT * FROM Driver") {
             List<Driver> driverList = new List<Driver>();
-            var result = GetRecords($"SELECT {(full ? "*" : "number, full_name, full_image, country")} FROM Driver;");
-            if (!result.Item1) {
-                foreach (DataRow row in GetDriverTable().Rows) {
-                    var driver = new Driver(row);
-                    driver.Team = GetDriverTeam(driver.TeamId);
-                    driverList.Add(driver);
-                }
-                return driverList;
+            foreach (DataRow row in GetTable(query).Rows) {
+                driverList.Add(new Driver(row));
             }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public Team GetDriverTeam(int teamId) {
-            var result = GetRecords($"SELECT small_name,color FROM Team WHERE id={teamId};");
-            if (!result.Item1) {
-                return new Team(((DataTable)result.Item2).Rows[0]);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public DataTable GetDriverTable() {
-            var result = GetRecords("SELECT * FROM Driver;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public Driver GetDriver(int number) {
-            var result = GetRecords($"SELECT * FROM Driver WHERE number={number};");
-            if (!result.Item1) {
-                var driver = new Driver(((DataTable)result.Item2).Rows[0]);
-                driver.Team = GetDriverTeam(driver.TeamId);
-                return driver;
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
+            return driverList;
         }
 
         /* TEAM **************************************************************************/
 
-        public List<Team> GetTeamList(bool full = true) {
+        public List<Team> GetTeamList(string query = "SELECT * FROM Team;") {
             List<Team> teamList = new List<Team>();
-            var result = GetRecords($"SELECT {(full ? "*" : "id, small_name, small_image, car_image, color")} FROM Team;");
-            if (!result.Item1) {
-                foreach (DataRow row in ((DataTable)result.Item2).Rows) {
-                    var team = new Team(row);
-                    team.SetDrivers(GetTeamDrivers(team.Id));
-                    teamList.Add(team);
-                }
-                return teamList;
+            foreach (DataRow row in GetTable(query).Rows) {
+                teamList.Add(new Team(row));
             }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public DataTable GetTeamTable() {
-            var result = GetRecords("SELECT * FROM Team;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public Team GetTeam(int id) {
-            var result = GetRecords($"SELECT * FROM Team WHERE id={id};");
-            if (!result.Item1) {
-                var team = new Team(((DataTable)result.Item2).Rows[0]);
-                team.SetDrivers(GetTeamDrivers(id));
-                return team;
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public (Driver, Driver) GetTeamDrivers(int id) {
-            var result = GetRecords($"SELECT number,full_name,full_image,team_id FROM Driver WHERE team_id={id};");
-            if (!result.Item1) {
-                var drivers = ((DataTable)result.Item2).Rows;
-                return (new Driver(drivers[0]), new Driver(drivers[1]));
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
+            return teamList;
         }
 
         /* RACE **************************************************************************/
 
-        public List<Race> GetRaceList(bool full = true) {
+        public List<Race> GetRaceList(string query = "SELECT * FROM Race;") {
             List<Race> raceList = new List<Race>();
-            var result = GetRecords($"SELECT {(full ? "*" : "id, name, date_start, circuit_id")} FROM Race;");
-            if (!result.Item1) {
-                foreach (DataRow row in ((DataTable)result.Item2).Rows) {
-                    var race = new Race(row);
-                    race.Circuit = GetRaceCircuit(race.CircuitId);
-                    raceList.Add(race);
-                }
-                return raceList;
+            foreach (DataRow row in GetTable(query).Rows) {
+                raceList.Add(new Race(row));
             }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public Circuit GetRaceCircuit(string id) {
-            var result = GetRecords($"SELECT small_image,country FROM Circuit WHERE id='{id}';");
-            if (!result.Item1) {
-                try {
-                    return new Circuit(((DataTable)result.Item2).Rows[0]);
-                }
-                catch {
-                    return new Circuit();
-                }
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public DataTable GetRaceTable() {
-            var result = GetRecords("SELECT * FROM Race;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public Race GetRace(int id) {
-            var result = GetRecords($"SELECT * FROM Race WHERE id={id};");
-            if (!result.Item1) {
-                var race = new Race(((DataTable)result.Item2).Rows[0]);
-                var circuitResult = GetRecords($"SELECT * FROM Circuit WHERE id={race.CircuitId};");
-
-                if (!circuitResult.Item1) {
-                    race.Circuit = new Circuit(((DataTable)circuitResult.Item2).Rows[0]);
-                }
-                else {
-                    throw new Exception(circuitResult.Item2.ToString());
-                }
-                return race;
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
+            return raceList;
         }
 
         /* CIRCUIT **************************************************************************/
 
-        public List<Circuit> GetCircuitList() {
+        public List<Circuit> GetCircuitList(string query = "SELECT * FROM Circuit;") {
             List<Circuit> circuitList = new List<Circuit>();
-            foreach (DataRow row in GetCircuitTable().Rows) {
+            foreach (DataRow row in GetTable(query).Rows) {
                 circuitList.Add(new Circuit(row));
             }
             return circuitList;
         }
 
-        public DataTable GetCircuitTable() {
-            var result = GetRecords("SELECT * FROM Circuit;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
+        /* RESULT **************************************************************************/
 
-        public Circuit GetCircuit(string id) {
-            var result = GetRecords($"SELECT * FROM Circuit WHERE id={id};");
-            if (!result.Item1) {
-                var circuit = new Circuit(((DataTable)result.Item2).Rows[0]);
-                var countryResult = GetRecords($"SELECT * FROM Country WHERE iso2={circuit.CountryCode};");
-                if (!countryResult.Item1) {
-                    circuit.Country = new Country(((DataTable)countryResult.Item2).Rows[0]);
-                }
-                else {
-                    throw new Exception(countryResult.Item2.ToString());
-                }
-                return circuit;
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public DataTable GetTable(string table) {
-            var result = GetRecords($"SELECT * FROM {table};");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public List<Result> GetResultList() {
+        public List<Result> GetResultList(string query = "SELECT * FROM Result;") {
             List<Result> resultList = new List<Result>();
-            foreach (DataRow row in GetResultTable().Rows) {
+            foreach (DataRow row in GetTable(query).Rows) {
                 resultList.Add(new Result(row));
             }
             return resultList;
-        }
-
-        public DataTable GetResultTable() {
-            var result = GetRecords("SELECT * FROM Result;");
-            if (!result.Item1) {
-                return ((DataTable)result.Item2);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
-        }
-
-        public Result GetResult(int id) {
-            var result = GetRecords($"SELECT * FROM Result WHERE id={id};");
-            if (!result.Item1) {
-                return new Result(((DataTable)result.Item2).Rows[0]);
-            }
-            else {
-                throw new Exception(result.Item2.ToString());
-            }
         }
 
         public void Backup(string WORKINGPATH) {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace FormulaOneDllProject {
+namespace FormulaOneDll {
     public class Circuit {
         private string _id;
         private string _name;
@@ -11,26 +11,29 @@ namespace FormulaOneDllProject {
         private int _length;
         private string _firstRaceYear;
         private string _fastestLap;
-        private string _smallImage;
-        private string _fullImage;
+        private Byte[] _smallImage;
+        private Byte[] _fullImage;
         private Country _country;
 
         public Circuit() { }
 
         public Circuit(DataRow r) {
-            Id = r["id"].ToString().Trim();
-            Name = r["name"].ToString().Trim();
+            SmallImage = (Byte[])r["small_image"];
             CountryCode = r["country"].ToString().Trim();
-            LapNumber = Convert.ToInt32(r["laps_number"]);
-            TurnNumber = Convert.ToInt32(r["turns_number"]);
-            Length = Convert.ToInt32(r["length"]);
-            FirstRaceYear = r["first_race_year"].ToString().Trim();
-            FastestLap = r["fastest_lap"].ToString().Trim();
-            SmallImage = r["full_image"].ToString().Trim();
-            FullImage = r["small_image"].ToString().Trim();
+            if (r.ItemArray.Length > 2) {
+
+                Id = r["id"].ToString().Trim();
+                Name = r["name"].ToString().Trim();
+                CountryCode = r["country"].ToString().Trim();
+                TurnNumber = Convert.ToInt32(r["turns_number"]);
+                Length = Convert.ToInt32(r["length"]);
+                FirstRaceYear = r["first_race_year"].ToString().Trim();
+                FastestLap = r["fastest_lap"].ToString().Trim();
+                FullImage = (Byte[])r["full_image"];
+            }
         }
 
-        public Circuit(string id, string name, string countryIso2, int lapNumber, int turnNumber, int length, string firstRaceYear, string fastestLap, string smallImage, string fullImage) {
+        public Circuit(string id, string name, string countryIso2, int lapNumber, int turnNumber, int length, string firstRaceYear, string fastestLap, Byte[] smallImage, Byte[] fullImage) {
             Id = id;
             Name = name;
             CountryCode = countryIso2;
@@ -51,8 +54,8 @@ namespace FormulaOneDllProject {
         public int Length { get => _length; set => _length = value; }
         public string FirstRaceYear { get => _firstRaceYear; set => _firstRaceYear = value; }
         public string FastestLap { get => _fastestLap; set => _fastestLap = value; }
-        public string SmallImage { get => _smallImage; set => _smallImage = value; }
-        public string FullImage { get => _fullImage; set => _fullImage = value; }
+        public Byte[] SmallImage { get => _smallImage; set => _smallImage = value; }
+        public Byte[] FullImage { get => _fullImage; set => _fullImage = value; }
         public Country Country { get => _country; set => _country = value; }
     }
 }

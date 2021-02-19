@@ -45,9 +45,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dtos\CircuitDto.cs" />
+    <Compile Include="Dtos\RaceCardDto.cs" />
+    <Compile Include="Dtos\Result\ResultDriverAllDto.cs" />
+    <Compile Include="Dtos\Result\ResultDriverDto.cs" />
+    <Compile Include="Dtos\Result\ResultRaceAllDto.cs" />
+    <Compile Include="Dtos\Result\ResultRaceDto.cs" />
+    <Compile Include="Dtos\Result\ResultRaceFastestDto.cs" />
+    <Compile Include="Dtos\Result\ResultRaceGridDto.cs" />
+    <Compile Include="Dtos\Result\ResultTeamAllDto.cs" />
+    <Compile Include="Dtos\Result\ResultTeamDto.cs" />
+    <Compile Include="Dtos\TeamCardDto.cs" />
+    <Compile Include="Dtos\TeamDto.cs" />
     <Compile Include="Models\Circuit.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\Driver.cs" />
+    <Compile Include="Dtos\DriverCardDto.cs" />
+    <Compile Include="Dtos\DriverDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Race.cs" />
     <Compile Include="Models\Result.cs" />

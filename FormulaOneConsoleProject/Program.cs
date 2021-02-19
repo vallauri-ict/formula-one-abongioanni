@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FormulaOneDllProject;
+using FormulaOneDll;
 
 namespace FormulaOneConsoleProject {
     internal class Program {

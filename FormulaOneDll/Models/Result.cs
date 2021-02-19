@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace FormulaOneDllProject {
+namespace FormulaOneDll {
     public class Result {
         int _raceId;
         int _driverId;
