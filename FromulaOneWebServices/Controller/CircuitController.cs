@@ -17,7 +17,7 @@ namespace FromulaOneWebServices.Controller {
         [HttpGet("")]
         [HttpGet("list")]
         [HttpGet("card")]
-        public IEnumerable<CircuitDto> Get() {
+        public IEnumerable<CircuitDto> GetCards() {
             List<CircuitDto> circuitList = new List<CircuitDto>();
             foreach (Circuit circuit in dbTools.GetCircuitList()) {
                 var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{circuit.CountryCode}';")[0];
@@ -27,7 +27,7 @@ namespace FromulaOneWebServices.Controller {
         }
 
         [HttpGet("{id}")]
-        public CircuitDto Get(string id) {
+        public CircuitDto GetById(string id) {
             Circuit circuit = dbTools.GetCircuitList($"SELECT * FROM Circuit WHERE id='{id}';")[0];
             var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{circuit.CountryCode}';")[0];
 

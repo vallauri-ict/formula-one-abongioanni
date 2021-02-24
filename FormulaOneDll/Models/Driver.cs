@@ -12,6 +12,9 @@ namespace FormulaOneDll {
     }
 
     public class Driver {
+        public enum Fields {
+            Name,
+        }
         private Byte[] _helmetImage;
         private Byte[] _fullImage;
         private string _fullName;

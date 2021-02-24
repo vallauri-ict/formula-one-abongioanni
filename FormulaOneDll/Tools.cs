@@ -86,6 +86,7 @@ namespace FormulaOneDll {
             using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
                 connection.Open();
                 query.Connection = connection;
+                query.Prepare();
                 try {
                     SqlDataAdapter sqlData = new SqlDataAdapter(query);
                     sqlData.Fill((DataTable)result);
@@ -152,6 +153,29 @@ namespace FormulaOneDll {
                 driverList.Add(new Driver(row));
             }
             return driverList;
+        }
+
+        public List<Driver> GetDriverList(SqlCommand query) {
+            List<Driver> driverList = new List<Driver>();
+            foreach (DataRow row in GetTable(query).Rows) {
+                driverList.Add(new Driver(row));
+            }
+            return driverList;
+        }
+
+        public SqlCommand GenerateDriverQuery(Driver.Fields field, string value) {
+            SqlCommand query = new SqlCommand();
+            switch (field) {
+                case Driver.Fields.Name:
+                    query = new SqlCommand() {
+                        CommandText = "SELECT number,Driver.full_name,color FROM Driver,Team WHERE Driver.team_id = Team.id AND EXISTS(SELECT value FROM STRING_SPLIT(Driver.full_name, ' ') WHERE value LIKE @NAME); "
+                    };
+                    query.Parameters.Add(@"@NAME", SqlDbType.VarChar, 50).Value = value + "%";
+                    break;
+                default:
+                    break;
+            }
+            return query;
         }
 
         /* TEAM **************************************************************************/

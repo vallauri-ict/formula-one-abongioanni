@@ -11,9 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormulaOneWebForm", "Formul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormulaOneDll", "FormulaOneDll\FormulaOneDll.csproj", "{A8A6D143-0864-4050-B4B8-81A2B155560E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiPlaygroundWebServices", "ApiPlaygroundWebServices\ApiPlaygroundWebServices.csproj", "{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FromulaOneWebServices", "FromulaOneWebServices\FromulaOneWebServices.csproj", "{FA4071E8-12ED-4589-A0C2-67411A05B999}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FromulaOneWebServices", "FromulaOneWebServices\FromulaOneWebServices.csproj", "{FA4071E8-12ED-4589-A0C2-67411A05B999}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +35,6 @@ Global
 		{A8A6D143-0864-4050-B4B8-81A2B155560E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8A6D143-0864-4050-B4B8-81A2B155560E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8A6D143-0864-4050-B4B8-81A2B155560E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{722A5E5C-ACA0-4081-A98E-7F5611E9A64E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FA4071E8-12ED-4589-A0C2-67411A05B999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FA4071E8-12ED-4589-A0C2-67411A05B999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA4071E8-12ED-4589-A0C2-67411A05B999}.Release|Any CPU.ActiveCfg = Release|Any CPU

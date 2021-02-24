@@ -27,8 +27,8 @@ namespace FromulaOneWebServices {
         }
 
         [HttpGet("{id}")]
-        public TeamDto Get(int id) {
-            
+        public TeamDto GetById(int id) {
+
             var team = dbTools.GetTeamList($"SELECT * FROM Team WHERE id={id};")[0];
             var drivers = dbTools.GetDriverList($"SELECT number,full_image,full_name FROM Driver WHERE team_id={team.Id}");
             var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{team.CountryCode}';")[0];

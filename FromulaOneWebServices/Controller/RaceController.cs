@@ -18,7 +18,7 @@ namespace FromulaOneWebServices.Controller {
 
         [HttpGet("")]
         [HttpGet("list")]
-        public IEnumerable<RaceCardDto> Get() {
+        public IEnumerable<RaceCardDto> GetCards() {
             List<RaceCardDto> raceList = new List<RaceCardDto>();
             foreach (Race race in dbTools.GetRaceList()) {
 
@@ -30,7 +30,7 @@ namespace FromulaOneWebServices.Controller {
         }
 
         [HttpGet("{id}")]
-        public RaceCardDto Get(int id) {
+        public RaceCardDto GetById(int id) {
             Race race = dbTools.GetRaceList($"SELECT * FROM Race WHERE id={id};")[0];
             var circuit = dbTools.GetCircuitList($"SELECT small_image,country FROM Circuit WHERE id='{race.CircuitId}';")[0];
             var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{circuit.CountryCode}';")[0];

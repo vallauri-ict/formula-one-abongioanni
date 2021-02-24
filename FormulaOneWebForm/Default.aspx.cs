@@ -3,8 +3,7 @@ using System.Collections;
 using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using FormulaOneDllProject;
-
+using FormulaOneDll;
 namespace FormulaOneWebForm {
     public partial class Default : System.Web.UI.Page {
         Tools dbTools;

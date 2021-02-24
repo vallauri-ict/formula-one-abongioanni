@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dtos\CircuitDto.cs" />
+    <Compile Include="Dtos\DriverSearchNameDto.cs" />
     <Compile Include="Dtos\RaceCardDto.cs" />
     <Compile Include="Dtos\Result\ResultDriverAllDto.cs" />
     <Compile Include="Dtos\Result\ResultDriverDto.cs" />
