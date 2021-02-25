@@ -18,11 +18,12 @@ namespace FormulaOneDll {
         }
 
         public ResultTeamDto(DataRow row) {
-            RaceId =row.Field<int>("race_id");
+            RaceId = row.Field<int>("race_id");
             RaceName = row.Field<string>("name");
             Date = row.Field<DateTime>("date_start");
             TeamId = row.Field<int>("id");
             TeamName = row.Field<string>("small_name");
+            _points = row.Field<int>("points");
         }
 
         public ResultTeamDto(int raceId, string raceName, DateTime date, int points, int teamId, string teamName) {
@@ -40,7 +41,7 @@ namespace FormulaOneDll {
         public int TeamId { get => _teamId; set => _teamId = value; }
         public string TeamName { get => _teamName; set => _teamName = value; }
 
-        public void SetPoints(int p1,int p2) {
+        public void SetPoints(int p1, int p2) {
             _points = points[p1 - 1] + points[p2 - 1];
         }
     }

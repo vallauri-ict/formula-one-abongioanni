@@ -94,33 +94,10 @@ namespace FromulaOneWebServices.Controller {
         [HttpGet("driver/all")]
         public IEnumerable<ResultDriverAllDto> GetDriverAllPoints() {
             List<ResultDriverAllDto> list = new List<ResultDriverAllDto>();
-            int ausNumber = int.MinValue;
-            int number;
-            bool isFirstElement = true;
-            int i = 0;
-            ResultDriverAllDto result = new ResultDriverAllDto();
-            ResultDriverAllDto prevResult = new ResultDriverAllDto();
 
-            DataTable resultTable = dbTools.GetTable($"SELECT Driver.number,Team.id, Driver.full_name,Driver.country,Team.small_name,Result.position FROM Driver,Team,Result WHERE Driver.number=Result.driver_id AND Driver.team_id=Team.id ORDER BY Driver.number ASC;");
+            DataTable resultTable = dbTools.GetTable($"SELECT Driver.number,Team.id, Driver.full_name,Driver.country,Team.small_name,Driver.points FROM Driver,Team WHERE Driver.team_id=Team.id ORDER BY Driver.points DESC;");
             foreach (DataRow row in resultTable.Rows) {
-                number = row.Field<int>("number");
-                if (number > ausNumber) {
-                    result = new ResultDriverAllDto(number, row.Field<string>("full_name"), row.Field<string>("country"), row.Field<string>("small_name"), row.Field<int>("id"), 0);
-                    if (!isFirstElement) {
-                        list.Add(prevResult);
-                    }
-                    ausNumber = number;
-                }
-                result.AddPoints(row.Field<int>("position"));
-                prevResult = result;
-                isFirstElement = false;
-            }
-            list.Add(prevResult);
-
-            list = list.OrderByDescending(o => o.Points).ToList();
-            i = 0;
-            foreach (var r in list) {
-                r.Position = i++ + 1;
+                list.Add(new ResultDriverAllDto(row.Field<int>("number"), row.Field<string>("full_name"), row.Field<string>("country"), row.Field<string>("small_name"), row.Field<int>("id"), row.Field<int>("points")));
             }
             return list;
         }
@@ -140,34 +117,12 @@ namespace FromulaOneWebServices.Controller {
         [HttpGet("team/all")]
         public IEnumerable<ResultTeamAllDto> GetTeamAllPoints() {
             List<ResultTeamAllDto> list = new List<ResultTeamAllDto>();
-            int ausId = int.MinValue;
-            int id;
-            bool isFirstElement = true;
-            int i = 0;
-            ResultTeamAllDto result = new ResultTeamAllDto();
-            ResultTeamAllDto prevResult = new ResultTeamAllDto();
 
-            DataTable resultTable = dbTools.GetTable($"SELECT Team.id, Team.small_name,Result.position FROM Driver,Team,Result WHERE Driver.number=Result.driver_id AND Driver.team_id=Team.id ORDER BY Team.id ASC;");
+            DataTable resultTable = dbTools.GetTable($"SELECT id, small_name,points FROM Team ORDER BY Team.points DESC;");
             foreach (DataRow row in resultTable.Rows) {
-                id = row.Field<int>("id");
-                if (id > ausId) {
-                    result = new ResultTeamAllDto(id, row.Field<string>("small_name"), 0);
-                    if (!isFirstElement) {
-                        list.Add(prevResult);
-                    }
-                    ausId = id;
-                }
-                result.AddPoints(row.Field<int>("position"));
-                prevResult = result;
-                isFirstElement = false;
+                list.Add(new ResultTeamAllDto(row.Field<int>("id"), row.Field<string>("small_name"), row.Field<int>("points")));
             }
-            list.Add(prevResult);
 
-            list = list.OrderByDescending(o => o.Points).ToList();
-            i = 0;
-            foreach (var r in list) {
-                r.Position = i++ + 1;
-            }
             return list;
         }
 
@@ -175,23 +130,10 @@ namespace FromulaOneWebServices.Controller {
         [HttpGet("team/{id}")]
         public IEnumerable<ResultTeamDto> GetTeamPoints(int id) {
             List<ResultTeamDto> list = new List<ResultTeamDto>();
-            DataTable resultTable = dbTools.GetTable($"SELECT race_id,Race.name,Team.id,Team.small_name,date_start,position FROM Team,Result,Race WHERE Result.race_id=Race.id AND Result.team_id=Team.id AND Team.id={id} ORDER BY date_start ASC;");
-
-            bool isFirstElement = true;
-            int ausPosition = 0;
-            ResultTeamDto result = new ResultTeamDto();
+            DataTable resultTable = dbTools.GetTable($"SELECT race_id,Race.name,Team.id,Team.small_name,date_start,SUM(Result.points) as points FROM Team,Result,Race WHERE Result.race_id=Race.id AND Result.team_id=Team.id AND Team.id={id} GROUP BY race_id,Race.name,Team.id,Team.small_name,date_start ORDER BY points DESC;");
 
             foreach (DataRow row in resultTable.Rows) {
-                if (isFirstElement) {
-                    ausPosition = row.Field<int>("position");
-                    isFirstElement=false;
-                }
-                else {
-                    result = new ResultTeamDto(row);
-                    result.SetPoints(ausPosition, row.Field<int>("position"));
-                    list.Add(result);
-                    isFirstElement = true;
-                }
+                list.Add(new ResultTeamDto(row));
             }
 
             return list;

@@ -10,7 +10,8 @@ CREATE TABLE [Team] (
 	[color] varchar(7),
 	[full_image] image,
 	[small_image] image,
-	[car_image] image
+	[car_image] image,
+	[points] int
 );
 
 INSERT INTO

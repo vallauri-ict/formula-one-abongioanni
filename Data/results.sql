@@ -3,6 +3,7 @@ CREATE TABLE [Result] (
   [driver_id] int,
   [team_id] int,
   [position] int,
+  [points] int,
   [time] varchar(11),
   [laps_number] int,
   [fastest_lap] varchar(8),
@@ -12,6 +13,104 @@ CREATE TABLE [Result] (
   PRIMARY KEY ([race_id], [driver_id])
 );
 
+CREATE TRIGGER [Trigger]
+	ON [dbo].[Result]
+	FOR DELETE, INSERT, UPDATE 
+	AS 
+	BEGIN 
+		DECLARE @pointsValue table 
+    (
+        position int,
+        points int
+    )
+	INSERT INTO @pointsValue VALUES(1,25) 
+	INSERT INTO @pointsValue VALUES(2,18) 
+	INSERT INTO @pointsValue VALUES(3,15) 
+	INSERT INTO @pointsValue VALUES(4,12) 
+	INSERT INTO @pointsValue VALUES(5,10)  
+	INSERT INTO @pointsValue VALUES(6,8) 
+	INSERT INTO @pointsValue VALUES(7,6) 
+	INSERT INTO @pointsValue VALUES(8,4) 
+	INSERT INTO @pointsValue VALUES(9,2) 
+	INSERT INTO @pointsValue VALUES(10,1) 
+	INSERT INTO @pointsValue VALUES(11,0) 
+	INSERT INTO @pointsValue VALUES(12,0) 
+	INSERT INTO @pointsValue VALUES(13,0) 
+	INSERT INTO @pointsValue VALUES(14,0) 
+	INSERT INTO @pointsValue VALUES(15,0) 
+	INSERT INTO @pointsValue VALUES(16,0)  
+	INSERT INTO @pointsValue VALUES(17,0)  
+	INSERT INTO @pointsValue VALUES(18,0)  
+	INSERT INTO @pointsValue VALUES(19,0)  
+	INSERT INTO @pointsValue VALUES(20,0) 
+
+  DECLARE @team_id INT 
+	DECLARE @team_points INT 
+  DECLARE @driver_id INT 
+	DECLARE @driver_points INT 
+  DECLARE @race_id INT  
+	DECLARE @position INT 
+	DECLARE @points INT
+
+  SELECT @position=position,@race_id=race_id,@driver_id=driver_id FROM INSERTED
+  SELECT @points=points FROM @pointsValue WHERE position=@position
+
+  UPDATE [Result] 
+  SET points=@points  
+  WHERE race_id=@race_id AND driver_id=@driver_id 
+
+	SELECT @driver_id = MIN( [Driver].number ) FROM [Driver] 
+
+	WHILE(@driver_id IS NOT NULL) 
+	BEGIN 
+		SET @driver_points=0 
+		SELECT @race_id = MIN(race_id) FROM Result WHERE driver_id=@driver_id 
+
+		WHILE(@race_id IS NOT NULL) 
+		BEGIN 
+			SELECT @position=position FROM Result WHERE race_id=@race_id AND driver_id=@driver_id 
+
+			SELECT @points=points FROM @pointsValue WHERE position=@position 
+			SET @driver_points= @driver_points+@points 
+ 
+			SELECT @race_id = MIN( race_id ) FROM Result WHERE race_id>@race_id AND driver_id=@driver_id 
+		END 
+		
+		UPDATE [Driver] SET points=@driver_points WHERE [Driver].number=@driver_id 
+
+ 		SELECT @driver_id = MIN( [Driver].number ) FROM [Driver] WHERE [Driver].number>@driver_id 
+	END 
+
+
+	SELECT @team_id = MIN( [Team].id ) FROM [Team] 
+
+	WHILE(@team_id IS NOT NULL) 
+	BEGIN 
+		SET @team_points=0 
+		SELECT @race_id = MIN(race_id) FROM Result WHERE team_id=@team_id 
+
+		WHILE(@race_id IS NOT NULL) 
+		BEGIN 
+    	SELECT @driver_id = MIN(driver_id) FROM Result WHERE team_id=@team_id AND race_id=@race_id 
+    	WHILE(@driver_id IS NOT NULL) 
+		  BEGIN 
+        SELECT @position=position FROM Result WHERE race_id=@race_id AND driver_id=@driver_id  AND team_id=@team_id
+
+        SELECT @points=points FROM @pointsValue WHERE position=@position 
+        SET @team_points= @team_points+@points 
+
+        SELECT @driver_id = MIN(driver_id) FROM Result WHERE team_id=@team_id AND race_id=@race_id AND driver_id>@driver_id
+      END
+
+      SELECT @race_id = MIN( race_id ) FROM Result WHERE race_id>@race_id AND team_id=@team_id 
+		END 
+		
+		UPDATE [Team] SET points=@team_points WHERE [Team].id=@team_id 
+
+ 		SELECT @team_id = MIN( [Team].id ) FROM [Team] WHERE [Team].id>@team_id 
+	END 
+END; 
+
 INSERT INTO
   [Result] (
     [race_id],
@@ -37,7 +136,7 @@ VALUES
     1,
     '1:02:939',
     ' '
-  );
+  )
 
 INSERT INTO
   [Result] (
@@ -64,7 +163,7 @@ VALUES
     4,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -90,7 +189,7 @@ VALUES
     3,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -116,7 +215,7 @@ VALUES
     5,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -142,7 +241,7 @@ VALUES
     8,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -168,7 +267,7 @@ VALUES
     6,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -194,7 +293,7 @@ VALUES
     12,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -220,7 +319,7 @@ VALUES
     14,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -246,7 +345,7 @@ VALUES
     18,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -272,7 +371,7 @@ VALUES
     11,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -298,7 +397,7 @@ VALUES
     20,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -324,7 +423,7 @@ VALUES
     13,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -350,7 +449,7 @@ VALUES
     16,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -376,7 +475,7 @@ VALUES
     19,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -402,7 +501,7 @@ VALUES
     17,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -428,7 +527,7 @@ VALUES
     15,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -454,7 +553,7 @@ VALUES
     4,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -480,7 +579,7 @@ VALUES
     9,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -506,7 +605,7 @@ VALUES
     10,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -532,7 +631,7 @@ VALUES
     2,
     '1:10:295',
     ' '
-  );
+  )
 
   INSERT INTO
   [Result] (
@@ -559,7 +658,7 @@ VALUES
     1,
     '1:02:939',
     ' '
-  );
+  )
 
 INSERT INTO
   [Result] (
@@ -586,7 +685,7 @@ VALUES
     4,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -612,7 +711,7 @@ VALUES
     3,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -638,7 +737,7 @@ VALUES
     5,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -664,7 +763,7 @@ VALUES
     8,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -690,7 +789,7 @@ VALUES
     6,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -716,7 +815,7 @@ VALUES
     12,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -742,7 +841,7 @@ VALUES
     14,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -768,7 +867,7 @@ VALUES
     18,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -794,7 +893,7 @@ VALUES
     11,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -820,7 +919,7 @@ VALUES
     20,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -846,7 +945,7 @@ VALUES
     13,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -872,7 +971,7 @@ VALUES
     16,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -898,7 +997,7 @@ VALUES
     19,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -924,7 +1023,7 @@ VALUES
     17,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -950,7 +1049,7 @@ VALUES
     15,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -976,7 +1075,7 @@ VALUES
     4,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -1002,7 +1101,7 @@ VALUES
     9,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -1028,7 +1127,7 @@ VALUES
     10,
     '1:10:295',
     ' '
-  );
+  )
   INSERT INTO
   [Result] (
     [race_id],
@@ -1054,4 +1153,4 @@ VALUES
     2,
     '1:10:295',
     ' '
-  );
+  )

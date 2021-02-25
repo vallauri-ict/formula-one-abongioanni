@@ -6,7 +6,8 @@ CREATE TABLE [Driver] (
 	[team_id] int,
 	[podiums_number] int,
 	[helmet_image] image,
-	[full_image] image
+	[full_image] image,
+	[points] int
 );
 
 INSERT INTO
