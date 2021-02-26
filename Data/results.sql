@@ -78,7 +78,8 @@ CREATE TRIGGER [Trigger]
 		
 		UPDATE [Driver] SET points=@driver_points WHERE [Driver].number=@driver_id 
 
- 		SELECT @driver_id = MIN( [Driver].number ) FROM [Driver] WHERE [Driver].number>@driver_id 
+ 		SELECT @driver_id = MIN( [Driver].number ) FROM [Driver] WHERE [Driver].number>@driver_id  
+
 	END 
 
 
@@ -87,27 +88,19 @@ CREATE TRIGGER [Trigger]
 	WHILE(@team_id IS NOT NULL) 
 	BEGIN 
 		SET @team_points=0 
-		SELECT @race_id = MIN(race_id) FROM Result WHERE team_id=@team_id 
 
-		WHILE(@race_id IS NOT NULL) 
+    SELECT @driver_id = MIN([Driver].number) FROM [Driver] WHERE team_id=@team_id 
+    WHILE(@driver_id IS NOT NULL) 
 		BEGIN 
-    	SELECT @driver_id = MIN(driver_id) FROM Result WHERE team_id=@team_id AND race_id=@race_id 
-    	WHILE(@driver_id IS NOT NULL) 
-		  BEGIN 
-        SELECT @position=position FROM Result WHERE race_id=@race_id AND driver_id=@driver_id  AND team_id=@team_id
+			SELECT @points=points FROM [Driver] WHERE [Driver].number=@driver_id 
+      SET @team_points = @team_points+@points 
 
-        SELECT @points=points FROM @pointsValue WHERE position=@position 
-        SET @team_points= @team_points+@points 
-
-        SELECT @driver_id = MIN(driver_id) FROM Result WHERE team_id=@team_id AND race_id=@race_id AND driver_id>@driver_id
-      END
-
-      SELECT @race_id = MIN( race_id ) FROM Result WHERE race_id>@race_id AND team_id=@team_id 
+      SELECT @driver_id = MIN([Driver].number) FROM [Driver] WHERE team_id=@team_id AND [Driver].number>@driver_id 
 		END 
 		
-		UPDATE [Team] SET points=@team_points WHERE [Team].id=@team_id 
+		UPDATE [Team] SET points=@team_points WHERE [Team].id=@team_id  
 
- 		SELECT @team_id = MIN( [Team].id ) FROM [Team] WHERE [Team].id>@team_id 
+ 		SELECT @team_id = MIN( [Team].id ) FROM [Team] WHERE [Team].id>@team_id  
 	END 
 END; 
 
