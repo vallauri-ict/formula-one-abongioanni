@@ -163,6 +163,16 @@ namespace FormulaOneDll {
             return driverList;
         }
 
+        public void GenerateDriverStats() {
+            using (SqlConnection connection = new SqlConnection(CONNECTION_STRING)) {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand("GenerateStats", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public SqlCommand GenerateDriverQuery(Driver.Fields field, string value) {
             SqlCommand query = new SqlCommand();
             switch (field) {

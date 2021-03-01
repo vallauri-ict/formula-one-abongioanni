@@ -13,16 +13,12 @@ CREATE TABLE [Result] (
   PRIMARY KEY ([race_id], [driver_id])
 );
 
-CREATE TRIGGER [Trigger]
-	ON [dbo].[Result]
+CREATE TRIGGER [Trigger] 
+	ON [dbo].[Result] 
 	FOR DELETE, INSERT, UPDATE 
 	AS 
-	BEGIN 
-		DECLARE @pointsValue table 
-    (
-        position int,
-        points int
-    )
+BEGIN 
+  DECLARE @pointsValue table (position int,points int) 
 	INSERT INTO @pointsValue VALUES(1,25) 
 	INSERT INTO @pointsValue VALUES(2,18) 
 	INSERT INTO @pointsValue VALUES(3,15) 
@@ -44,66 +40,105 @@ CREATE TRIGGER [Trigger]
 	INSERT INTO @pointsValue VALUES(19,0)  
 	INSERT INTO @pointsValue VALUES(20,0) 
 
-  DECLARE @team_id INT 
-	DECLARE @team_points INT 
-  DECLARE @driver_id INT 
-	DECLARE @driver_points INT 
-  DECLARE @race_id INT  
+  DECLARE @teamId INT 
+  DECLARE @driverId INT 
+  DECLARE @raceId INT  
 	DECLARE @position INT 
-	DECLARE @points INT
+	DECLARE @points INT 
 
-  SELECT @position=position,@race_id=race_id,@driver_id=driver_id FROM INSERTED
-  SELECT @points=points FROM @pointsValue WHERE position=@position
+  SELECT @position=position,@raceId=race_id,@driverId=driver_id,@teamId=team_id FROM INSERTED 
+  SELECT @points=points FROM @pointsValue WHERE position=@position 
 
   UPDATE [Result] 
   SET points=@points  
-  WHERE race_id=@race_id AND driver_id=@driver_id 
+  WHERE race_id=@raceId AND driver_id=@driverId 
 
-	SELECT @driver_id = MIN( [Driver].number ) FROM [Driver] 
+  IF EXISTS (select * from sysobjects where name='Driver' and xtype='U') 
+  BEGIN
+    IF (@position<4)
+      UPDATE [Driver] 
+      SET points=points+@points,podiums_number=podiums_number+1  
+      WHERE [Driver].number=@driverId 
+    ELSE
+      UPDATE [Driver] 
+      SET points=points+@points 
+      WHERE [Driver].number=@driverId 
+  END
 
-	WHILE(@driver_id IS NOT NULL) 
-	BEGIN 
-		SET @driver_points=0 
-		SELECT @race_id = MIN(race_id) FROM Result WHERE driver_id=@driver_id 
+  IF EXISTS (select * from sysobjects where name='Team' and xtype='U') 
+    UPDATE [Team] 
+    SET points=points+@points  
+    WHERE [Team].id=@teamId 
 
-		WHILE(@race_id IS NOT NULL) 
-		BEGIN 
-			SELECT @position=position FROM Result WHERE race_id=@race_id AND driver_id=@driver_id 
-
-			SELECT @points=points FROM @pointsValue WHERE position=@position 
-			SET @driver_points= @driver_points+@points 
- 
-			SELECT @race_id = MIN( race_id ) FROM Result WHERE race_id>@race_id AND driver_id=@driver_id 
-		END 
-		
-		UPDATE [Driver] SET points=@driver_points WHERE [Driver].number=@driver_id 
-
- 		SELECT @driver_id = MIN( [Driver].number ) FROM [Driver] WHERE [Driver].number>@driver_id  
-
-	END 
-
-
-	SELECT @team_id = MIN( [Team].id ) FROM [Team] 
-
-	WHILE(@team_id IS NOT NULL) 
-	BEGIN 
-		SET @team_points=0 
-
-    SELECT @driver_id = MIN([Driver].number) FROM [Driver] WHERE team_id=@team_id 
-    WHILE(@driver_id IS NOT NULL) 
-		BEGIN 
-			SELECT @points=points FROM [Driver] WHERE [Driver].number=@driver_id 
-      SET @team_points = @team_points+@points 
-
-      SELECT @driver_id = MIN([Driver].number) FROM [Driver] WHERE team_id=@team_id AND [Driver].number>@driver_id 
-		END 
-		
-		UPDATE [Team] SET points=@team_points WHERE [Team].id=@team_id  
-
- 		SELECT @team_id = MIN( [Team].id ) FROM [Team] WHERE [Team].id>@team_id  
-	END 
+  EXEC GenerateStats @driverId 
 END; 
 
+CREATE PROCEDURE [dbo].[GenerateStats] 
+  @driverId INT 
+AS 
+  DECLARE @points INT 
+  DECLARE @winCount INT 
+  DECLARE @secondCount INT 
+  DECLARE @thirdCount INT  
+  DECLARE @fastCount INT 
+  DECLARE @poleCount INT 
+  DECLARE @pointsAvg FLOAT 
+
+  IF NOT EXISTS (select * from sysobjects where name='Stats' and xtype='U') 
+  BEGIN 
+    CREATE TABLE [Stats] ( 
+      [driver_id] INT PRIMARY KEY, 
+      [points] INT,  
+      [win_count] INT,  
+      [second_count] INT, 
+      [third_count] INT, 
+      [fast_count] INT, 
+      [pole_count] INT, 
+      [points_avg] FLOAT, 
+    )
+  END 
+  IF EXISTS (select * from sysobjects where name='Driver' and xtype='U') 
+  BEGIN 
+    SELECT @points=points FROM [Driver] WHERE [Driver].number=@driverId
+    SELECT @winCount=COUNT(*) FROM [Result] WHERE [Result].driver_id=@driverId AND position=1 
+    SELECT @secondCount=COUNT(*) FROM [Result] WHERE [Result].driver_id=@driverId AND position=2 
+    SELECT @thirdCount=COUNT(*) FROM [Result] WHERE [Result].driver_id=@driverId AND position=3 
+    SELECT @poleCount=COUNT(*) FROM [Result] WHERE [Result].driver_id=@driverId AND start_position=1 
+    SELECT @fastCount=COUNT(*) 
+    FROM [Result] 
+      INNER JOIN (SELECT race_id,MIN(fastest_lap) fl FROM [Result] GROUP BY race_id) a ON a.race_id=[Result].race_id AND a.fl=[Result].fastest_lap 
+    WHERE [Result].driver_id=@driverId 
+      
+    SELECT @pointsAvg=AVG(points) FROM [Result] WHERE [Result].driver_id=@driverId 
+  END 
+  IF EXISTS (select * from [Stats] WHERE driver_id=@driverId) 
+  BEGIN 
+    UPDATE [Stats] SET 
+      points=@points, 
+      win_count=@winCount, 
+      second_count=@secondCount, 
+      third_count=@thirdCount, 
+      fast_count=@fastCount, 
+      pole_count=@poleCount, 
+      points_avg=@pointsAvg 
+    WHERE driver_id=@driverId
+  END 
+  ELSE  
+  BEGIN 
+    INSERT INTO [Stats] VALUES( 
+      @driverId, 
+      @points, 
+      @winCount, 
+      @secondCount, 
+      @thirdCount, 
+      @fastCount, 
+      @poleCount, 
+      @pointsAvg 
+    ) 
+  END 
+RETURN 0;
+
+
 INSERT INTO
   [Result] (
     [race_id],
@@ -129,7 +164,7 @@ VALUES
     1,
     '1:02:939',
     ' '
-  )
+  );
 
 INSERT INTO
   [Result] (
@@ -152,11 +187,12 @@ VALUES
     2,
     '1:30:02:739',
     71,
-    '1:02:951',
+    '1:02:950',
     4,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -182,7 +218,8 @@ VALUES
     3,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -204,11 +241,12 @@ VALUES
     4,
     '1:30:06:739',
     71,
-    '1:02:951',
+    '1:02:952',
     5,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -230,11 +268,12 @@ VALUES
     5,
     '1:30:08:739',
     71,
-    '1:02:951',
+    '1:02:953',
     8,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -256,11 +295,12 @@ VALUES
     6,
     '1:30:10:739',
     71,
-    '1:02:951',
+    '1:02:954',
     6,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -282,11 +322,12 @@ VALUES
     7,
     '1:30:12:739',
     71,
-    '1:02:951',
+    '1:02:955',
     12,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -308,11 +349,12 @@ VALUES
     8,
     '1:30:14:739',
     71,
-    '1:02:951',
+    '1:02:956',
     14,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -334,11 +376,12 @@ VALUES
     9,
     '1:30:15:739',
     71,
-    '1:02:951',
+    '1:02:957',
     18,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -360,11 +403,12 @@ VALUES
     10,
     '1:30:16:739',
     71,
-    '1:02:951',
+    '1:02:958',
     11,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -386,11 +430,12 @@ VALUES
     11,
     '1:30:18:739',
     71,
-    '1:02:951',
+    '1:02:959',
     20,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -412,11 +457,12 @@ VALUES
     12,
     '1:30:20:739',
     69,
-    '1:02:951',
+    '1:02:960',
     13,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -438,11 +484,12 @@ VALUES
     13,
     '1:30:22:739',
     67,
-    '1:02:951',
+    '1:02:961',
     16,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -464,11 +511,12 @@ VALUES
     14,
     '1:30:23:739',
     53,
-    '1:02:951',
+    '1:02:962',
     19,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -490,11 +538,12 @@ VALUES
     15,
     '1:30:24:739',
     49,
-    '1:02:951',
+    '1:02:963',
     17,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -516,11 +565,12 @@ VALUES
     16,
     '1:30:25:739',
     49,
-    '1:02:951',
+    '1:02:964',
     15,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -542,11 +592,12 @@ VALUES
     17,
     '1:30:26:739',
     24,
-    '1:02:951',
+    '1:02:965',
     4,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -568,11 +619,12 @@ VALUES
     18,
     '1:30:30:739',
     20,
-    '1:02:951',
+    '1:02:966',
     9,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -594,11 +646,12 @@ VALUES
     19,
     '1:30:32:739',
     17,
-    '1:02:951',
+    '1:02:967',
     10,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -620,11 +673,11 @@ VALUES
     20,
     '1:30:33:739',
     11,
-    '1:02:951',
+    '1:02:968',
     2,
     '1:10:295',
     ' '
-  )
+  );
 
   INSERT INTO
   [Result] (
@@ -647,11 +700,11 @@ VALUES
     1,
     '1:30:00:739',
     71,
-    '1:07:475',
+    '1:07:476',
     1,
     '1:02:939',
     ' '
-  )
+  );
 
 INSERT INTO
   [Result] (
@@ -674,11 +727,12 @@ VALUES
     2,
     '1:30:02:739',
     71,
-    '1:02:951',
+    '1:02:970',
     4,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -700,11 +754,12 @@ VALUES
     3,
     '1:30:04:739',
     71,
-    '1:02:951',
+    '1:02:911',
     3,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -726,11 +781,12 @@ VALUES
     4,
     '1:30:06:739',
     71,
-    '1:02:951',
+    '1:02:922',
     5,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -752,11 +808,12 @@ VALUES
     5,
     '1:30:08:739',
     71,
-    '1:02:951',
+    '1:02:933',
     8,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -778,11 +835,12 @@ VALUES
     6,
     '1:30:10:739',
     71,
-    '1:02:951',
+    '1:02:932',
     6,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -796,7 +854,7 @@ VALUES
     [qualifying_time],
     [notes]
   )
-VALUES
+VALUES 
   (
     1,
     1,
@@ -804,11 +862,12 @@ VALUES
     7,
     '1:30:12:739',
     71,
-    '1:02:951',
+    '1:02:945',
     12,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -830,11 +889,12 @@ VALUES
     8,
     '1:30:14:739',
     71,
-    '1:02:951',
+    '1:02:934',
     14,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -856,11 +916,12 @@ VALUES
     9,
     '1:30:15:739',
     71,
-    '1:02:951',
+    '1:02:988',
     18,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -882,11 +943,12 @@ VALUES
     10,
     '1:30:16:739',
     71,
-    '1:02:951',
+    '1:02:912',
     11,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -908,11 +970,12 @@ VALUES
     11,
     '1:30:18:739',
     71,
-    '1:02:951',
+    '1:02:999',
     20,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -934,11 +997,12 @@ VALUES
     12,
     '1:30:20:739',
     69,
-    '1:02:951',
+    '1:02:913',
     13,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -960,11 +1024,12 @@ VALUES
     13,
     '1:30:22:739',
     67,
-    '1:02:951',
+    '1:02:914',
     16,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -986,11 +1051,12 @@ VALUES
     14,
     '1:30:23:739',
     53,
-    '1:02:951',
+    '1:02:915',
     19,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -1012,11 +1078,12 @@ VALUES
     15,
     '1:30:24:739',
     49,
-    '1:02:951',
+    '1:02:916',
     17,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -1038,11 +1105,12 @@ VALUES
     16,
     '1:30:25:739',
     49,
-    '1:02:951',
+    '1:02:917',
     15,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -1064,11 +1132,12 @@ VALUES
     17,
     '1:30:26:739',
     24,
-    '1:02:951',
+    '1:02:918',
     4,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -1090,11 +1159,12 @@ VALUES
     18,
     '1:30:30:739',
     20,
-    '1:02:951',
+    '1:02:919',
     9,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -1116,11 +1186,12 @@ VALUES
     19,
     '1:30:32:739',
     17,
-    '1:02:951',
+    '1:02:920',
     10,
     '1:10:295',
     ' '
-  )
+  );
+
   INSERT INTO
   [Result] (
     [race_id],
@@ -1142,8 +1213,8 @@ VALUES
     20,
     '1:30:33:739',
     11,
-    '1:02:951',
+    '1:02:921',
     2,
     '1:10:295',
     ' '
-  )
+  );

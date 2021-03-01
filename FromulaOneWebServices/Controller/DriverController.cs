@@ -26,16 +26,17 @@ namespace FromulaOneWebServices {
             return driverList;
         }
 
-        [HttpGet("{id}")]
         [HttpGet("{number}")]
-        [HttpGet("id/{id}")]
+        [HttpGet("id/{number}")]
         [HttpGet("number/{number}")]
+        [HttpGet("details/{number}")]
         public DriverDto GetByNumber(int number) {
+            var stats = dbTools.GetTable($"SELECT * FROM Stats WHERE driver_id={number};").Rows[0];
             var driver = dbTools.GetDriverList($"SELECT * FROM Driver WHERE number={number};")[0];
             var team = dbTools.GetTeamList($"SELECT id,small_name,color FROM Team WHERE id={driver.TeamId};")[0];
             var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{driver.CountryCode}';")[0];
 
-            return new DriverDto(driver, team, country);
+            return new DriverDto(driver, team, country, stats);
         }
 
         [HttpGet("name/{name}")]

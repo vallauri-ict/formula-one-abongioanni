@@ -469,3 +469,6 @@ VALUES
 		'DE',
 		CONVERT(date, '1987-07-03')
 	);
+
+
+UPDATE [Driver] SET points=0;

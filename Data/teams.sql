@@ -323,3 +323,5 @@ VALUES
 		'GB',
 		9
 	);
+
+	UPDATE [Team] SET points=0;

@@ -34,3 +34,12 @@ IF EXISTS(
 ) DROP TABLE [Race];
 
 DROP TABLE [Result];
+
+IF EXISTS(
+    SELECT
+        *
+    FROM
+        [Stats]
+) DROP TABLE [Stats];
+
+IF object_id('GenerateStats') IS NOT NULL DROP PROCEDURE [GenerateStats];
