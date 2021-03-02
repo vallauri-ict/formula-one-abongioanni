@@ -66,6 +66,7 @@ namespace FromulaOneWebServices.Controller {
             foreach (DataRow row in resultTable.Rows) {
                 list.Add(new ResultRaceDto(row));
             }
+            list.Sort((p, q) => p.Position.CompareTo(q.Position));
             return list;
         }
 
