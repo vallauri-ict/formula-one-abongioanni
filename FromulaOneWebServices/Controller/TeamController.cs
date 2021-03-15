@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,6 +35,17 @@ namespace FromulaOneWebServices {
             var country = dbTools.GetCountryList($"SELECT name FROM Country WHERE iso2='{team.CountryCode}';")[0];
 
             return new TeamDto(team, drivers, country);
+        }
+
+        [HttpGet("name/{name}")]
+        public List<TeamSearchName> GetByName(string name) {
+            List<TeamSearchName> teamList = new List<TeamSearchName>();
+
+            var drivers = dbTools.GetTable(dbTools.GenerateDriverQuery(Driver.Fields.Name, name));
+            foreach (DataRow row in drivers.Rows) {
+                teamList.Add(new TeamSearchName(row.Field<int>("id"), row.Field<string>("small_name"), row.Field<string>("color"), row.Field<Byte[]>("small_image")));
+            }
+            return teamList;
         }
     }
 }

@@ -3,6 +3,9 @@ using System.Data;
 
 namespace FormulaOneDll {
     public class Team {
+        public enum Fields {
+            SmallName,
+        }
         private int _id;
         private Byte[] _smallLogo;
         private Byte[] _fullLogo;

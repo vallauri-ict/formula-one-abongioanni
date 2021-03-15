@@ -15,7 +15,7 @@ CREATE TABLE [Result] (
 
 CREATE TRIGGER [Trigger] 
 	ON [dbo].[Result] 
-	FOR DELETE, INSERT, UPDATE 
+	FOR INSERT 
 	AS 
 BEGIN 
   DECLARE @pointsValue table (position int,points int) 

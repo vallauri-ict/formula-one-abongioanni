@@ -33,6 +33,9 @@
     <Reference Include="AgileObjects.NetStandardPolyfills, Version=1.4.1.0, Culture=neutral, PublicKeyToken=06131ac1c008ad4e, processorArchitecture=MSIL">
       <HintPath>..\packages\AgileObjects.NetStandardPolyfills.1.4.1\lib\net40\AgileObjects.NetStandardPolyfills.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -58,6 +61,8 @@
     <Compile Include="Dtos\Result\ResultTeamDto.cs" />
     <Compile Include="Dtos\TeamCardDto.cs" />
     <Compile Include="Dtos\TeamDto.cs" />
+    <Compile Include="Dtos\TeamSearchName.cs" />
+    <Compile Include="HttpUtils.cs" />
     <Compile Include="Models\Circuit.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\Driver.cs" />

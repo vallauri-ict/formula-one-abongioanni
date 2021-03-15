@@ -198,6 +198,21 @@ namespace FormulaOneDll {
             return teamList;
         }
 
+        public SqlCommand GenerateTeamQuery(Team.Fields field, string value) {
+            SqlCommand query = new SqlCommand();
+            switch (field) {
+                case Team.Fields.SmallName:
+                    query = new SqlCommand() {
+                        CommandText = "SELECT id,small_name,small_image,color FROM Team WHERE EXISTS(SELECT value FROM STRING_SPLIT(small_name, ' ') WHERE value LIKE @NAME); "
+                    };
+                    query.Parameters.Add(@"@NAME", SqlDbType.VarChar, 50).Value = value + "%";
+                    break;
+                default:
+                    break;
+            }
+            return query;
+        }
+
         /* RACE **************************************************************************/
 
         public List<Race> GetRaceList(string query = "SELECT * FROM Race;") {
