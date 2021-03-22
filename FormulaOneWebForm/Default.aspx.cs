@@ -7,19 +7,34 @@ using FormulaOneDll;
 namespace FormulaOneWebForm {
     public partial class Default : System.Web.UI.Page {
         Tools dbTools;
-        HttpUtils http;
 
         protected void Page_Load(object sender, EventArgs e) {
             dbTools = new Tools(Paths.CONNECTION_STRING);
-            http = new HttpUtils();
             if (!Page.IsPostBack) {
-                content.DataSource = http.GetDriverCards();
-                content.DataBind();
+                string[] elem = dbTools.ShowTables();
+                Array.Sort(elem);
+                cmb.DataSource = elem;
             }
+            cmb.DataBind();
             content.DataBound += Content_DataBound;
+            CmbCountries_SelectedIndexChanged(cmb, new EventArgs());
         }
 
         private void Content_DataBound(object sender, EventArgs e) {
+            if (cmb.SelectedValue == "Team") {
+                foreach (GridViewRow row in content.Rows) {
+                    string color = row.Cells[row.Cells.Count - 1].Text;
+                    row.Cells[row.Cells.Count - 1].Text = "";
+                    row.Cells[row.Cells.Count - 1].BackColor = ColorTranslator.FromHtml(color);
+                }
+            }
+            noResults.InnerText = cmb.SelectedValue + "'s table is empty!";
+            noResults.Visible = content.Rows.Count == 0;
+        }
+
+        protected void CmbCountries_SelectedIndexChanged(object sender, EventArgs e) {
+            content.DataSource = dbTools.GetTable(((DropDownList)sender).SelectedValue);
+            content.DataBind();
         }
     }
 }

@@ -11,9 +11,22 @@
 </head>
 <body>
     <form id="form1" runat="server">
-
-        <asp:ListBox ID="content" runat="server"></asp:ListBox>
-
+        <asp:DropDownList
+            ID="cmb"
+            runat="server"
+            OnSelectedIndexChanged="cmbCountries_SelectedIndexChanged"
+            AutoPostBack="true">
+        </asp:DropDownList>
+        <br />
+        <br />
+        <br />
+        <asp:GridView
+            ID="content"
+            runat="server"
+            CssClass="mydatagrid"
+            HeaderStyle-CssClass="header"
+            RowStyle-CssClass="rows">
+        </asp:GridView>
         <span runat="server" class="no-results" id="noResults"></span>
     </form>
 </body>
